@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/DADN_2024_TeamBlueWhale/static/css/main.34ee0d2a.css",
+    "main.js": "/DADN_2024_TeamBlueWhale/static/js/main.1d644b83.js",
+    "static/js/453.52edb8fc.chunk.js": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js",
+    "index.html": "/DADN_2024_TeamBlueWhale/index.html",
+    "main.34ee0d2a.css.map": "/DADN_2024_TeamBlueWhale/static/css/main.34ee0d2a.css.map",
+    "main.1d644b83.js.map": "/DADN_2024_TeamBlueWhale/static/js/main.1d644b83.js.map",
+    "453.52edb8fc.chunk.js.map": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.34ee0d2a.css",
+    "static/js/main.1d644b83.js"
+  ]
+}
