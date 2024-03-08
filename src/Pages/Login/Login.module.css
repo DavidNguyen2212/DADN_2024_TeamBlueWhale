@@ -1,0 +1,10 @@
+.wrapper {
+    background: url("https://cdn.pixabay.com/photo/2021/03/13/04/11/touch-screen-6091015_1280.jpg") top center / cover no-repeat;
+    padding: 20px;
+}
+.inner_wrapper {
+    border: 4px solid white;
+}
+.submit_button {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}

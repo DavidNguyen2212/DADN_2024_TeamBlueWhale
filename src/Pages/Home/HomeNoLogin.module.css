@@ -1,0 +1,45 @@
+.big_cover {
+    background: url("https://cdn.pixabay.com/photo/2021/03/13/04/11/touch-screen-6091015_1280.jpg") top center / cover no-repeat;
+    padding-top: 50%;
+    width: 100%;
+    background-size: cover;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(40, 10, 117, 0.094);
+  }
+  
+.slider__content {
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.slider__heading {
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  /* text-shadow: -1px 0 #ffffff, 0 1px #fff, 1px 0 #ffffff, 0 -1px #ffffff; */
+  white-space: nowrap;
+}
+
+.slider__desc {
+  letter-spacing: 1px;
+  text-shadow: -1px 0 #ffffff, 0 1px #fff, 1px 0 #ffffff, 0 -1px #ffffff;
+}
+
+.item_title {
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.content_img {
+  background: url("https://image.anhducdigital.vn/smarthome/giai-phap-smarthome/content-danh-muc/giai-phap-smarthome-2.jpg") center center / cover no-repeat;
+  background-position: left;
+  padding-top: 60%;
+  margin: 10px auto;
+}
+
+@media (min-width: 768px) {
+  .item-1,
+  .item-2,
+  .item-3 {
+    padding-top: 35%;
+  }
+}

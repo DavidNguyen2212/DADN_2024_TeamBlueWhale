@@ -1,0 +1,27 @@
+.outer {
+    box-shadow: 6px 6px 10px -1px rgba(0,0,0,0.15), -6px -6px 10px -1px rgba(255,255,255,0.7)
+}
+
+.inner {
+    /* box-shadow: inset 4px 4px 6px -1px rgba(0,0,0,0.2), inset -4px -4px 6px -1px rgba(255,255,255,0.7),
+        -0.5px -0.5px 0px rgba(255,255,255,1), 0.5px 0.5px 0px rgba(0,0,0,0.15),
+        0px 12px 10px -10px rgba(0,0,0,0.05); */
+}
+
+._circle {
+    /* stroke-dasharray: 1000; */
+    /* stroke-dashoffset: 1000; */
+    /* animation: anm 2s linear forwards; */
+}
+
+._svg {
+    position: absolute;
+    top: 0;
+    left: 0
+}
+
+/* @keyframes anm {
+    100% {
+        stroke-dashoffset: 350;
+    }
+} */

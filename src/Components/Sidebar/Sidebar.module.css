@@ -1,0 +1,4 @@
+.active {
+    box-shadow: 0 0 5px 3px rgba(255, 255, 255, 0.466);
+    background-color: #2679a8;
+}
