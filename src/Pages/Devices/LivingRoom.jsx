@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GasIcon from "../../Assets/images/gas.svg"
-import { HumidIcon, TemperatureIcon, AirConditionerIcon } from "../../Assets/icons/Icon";
+import { HumidIcon, TemperatureIcon, AirConditionerIcon, FridgeIcon, LightIcon} from "../../Assets/icons/Icon";
 import ReactSwitch from "react-switch";
 import { Minus, Plus } from "lucide-react";
 import styles from "./LivingRoom.module.css"
@@ -44,8 +44,9 @@ export default function LivingRoom() {
     const [gas, setGas] = useState(30);
 
     return (
-    <div className={`flex flex-row gap-4 mt-4`}>
+    <div className={`flex flex-row gap-4 mt-4 mb-4`}>
         {/* AirCond block */}
+        <div>
         <div className={`w-[56rem] h-[36rem] ml-4 pt-4 bg-[#F7F1FF] rounded-3xl`}>
             {/* AirCond Heading area */}
             <div className={`pl-4 pr-8 flex flex-row items-center justify-between`}>
@@ -60,7 +61,7 @@ export default function LivingRoom() {
                         </p>}
 
                         <div className="switch flex">
-                        <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
+                            <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
                         </div>
                     </div>
                 </div>
@@ -109,6 +110,104 @@ export default function LivingRoom() {
             <div className={`mt-4 text-3xl font-bold flex items-center justify-center`}>0 {'\u00b0'}C</div>
         </div>
 
+        {/* Lights block */}
+        <div className={`w-[56rem] h-[36rem] mt-8 ml-4 bg-[#F7F1FF] rounded-3xl`}>
+            <div className={`w-full h-1/2 rounded-3xl px-4 flex flex-row gap-20 justify-center items-center`}>
+                {/* Fridge */}
+                <div className={`w-[40%] h-2/3 bg-[#09006E] flex flex-col rounded-3xl pt-3 gap-8`}>
+                    {/* Row 1 of fridge */}
+                    <div className="flex flex-row justify-center gap-8 w-full mt-4">
+                        {onAC === "on" ? 
+                        <p className="text-white overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                        Bật{" "}
+                        </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                            Tắt{" "}
+                        </p>}
+
+                        <div className="switch flex items-center justify-end ">
+                            <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
+                        </div>
+                    </div>
+                    {/* Row 2 of fridge */}
+                    <div className={`flex flex-row justify-center items-center gap-12 w-full mt-4`}>
+                        <FridgeIcon />
+                        <span className={`text-white text-2xl font-semibold flex items-center justify-end w-1/2`}>Tủ lạnh</span>
+                    </div>
+                </div>
+
+                {/* Light 1 */}
+                <div className={`w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl pt-3 gap-8`}>
+                    {/* Row 1 of light 1*/}
+                    <div className="flex flex-row justify-center gap-8 w-full mt-4">
+                        {onAC === "on" ? 
+                        <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                        Bật{" "}
+                        </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                            Tắt{" "}
+                        </p>}
+
+                        <div className="switch flex items-center justify-end ">
+                            <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
+                        </div>
+                    </div>
+                    {/* Row 2 of light 1 */}
+                    <div className={`flex flex-row justify-center items-center gap-12 w-full mt-4`}>
+                        <LightIcon />
+                        <span className={`text-black text-2xl font-semibold flex items-center justify-end w-1/2`}>Đèn 1</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div className={`w-full h-1/2 rounded-3xl px-4 flex flex-row gap-20 justify-center items-center`}>
+                {/* Fridge */}
+                <div className={`w-[40%] h-2/3 bg-[#09006E] flex flex-col rounded-3xl py-3 gap-8`}>
+                    {/* Row 1 of fridge */}
+                    <div className="flex flex-row justify-center gap-8 w-full mt-4">
+                        {onAC === "on" ? 
+                        <p className="text-white overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                        Bật{" "}
+                        </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                            Tắt{" "}
+                        </p>}
+
+                        <div className="switch flex items-center justify-end ">
+                            <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
+                        </div>
+                    </div>
+                    {/* Row 2 of fridge */}
+                    <div className={`flex flex-row justify-center items-center gap-12 w-full mt-4`}>
+                        <FridgeIcon />
+                        <span className={`text-white text-2xl font-semibold flex items-center justify-end w-1/2`}>Tủ lạnh</span>
+                    </div>
+                </div>
+
+                {/* Light 1 */}
+                <div className={`w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8`}>
+                    {/* Row 1 of light 1*/}
+                    <div className="flex flex-row justify-center gap-8 w-full mt-4">
+                        {onAC === "on" ? 
+                        <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                        Bật{" "}
+                        </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
+                            Tắt{" "}
+                        </p>}
+
+                        <div className="switch flex items-center justify-end ">
+                            <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
+                        </div>
+                    </div>
+                    {/* Row 2 of light 1 */}
+                    <div className={`flex flex-row justify-center items-center gap-12 w-full mt-4`}>
+                        <LightIcon />
+                        <span className={`text-black text-2xl font-semibold flex items-center justify-end w-1/2`}>Đèn 1</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+
         {/* Temp - Humid - Gas block */}
         <div className={`flex flex-col gap-6`}>
             <div className={`w-[260px] pt-2 rounded-3xl flex flex-col justify items-center gap-4 bg-[#F7F1FF]`}>
@@ -116,13 +215,13 @@ export default function LivingRoom() {
                 <div className={`text-[#555555] text-4xl font-extrabold`}>{temperature > 0 ? `+ ${temperature}`:`- ${temperature}`} {'\u00b0'}C</div>
                 <TemperatureIcon />
             </div>
-            <div className={`w-[260px] h-[348px] pt-2 rounded-tl-3xl rounded-tr-3xl rounded-bl-[100px] rounded-br-[100px] flex flex-col justify items-center gap-4 bg-[#F7F1FF]`}>
+            <div className={`w-[260px] h-[312px] pt-2 mb-1.5 rounded-tl-3xl rounded-tr-3xl rounded-bl-[100px] rounded-br-[100px] flex flex-col justify items-center gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium mb-2`}>Humidity</div>
                 <div className={`text-[#555555] text-4xl font-extrabold`}>{humid} %</div>
                 <HumidIcon />
             </div>
             <div className={`w-[260px] h-[330px] pt-2 rounded-3xl flex flex-col justify items-center gap-4 bg-[#F7F1FF]`}>
-                <div className={`font-medium mb-2`}>Gas</div>
+                <div className={`font-medium mb-0`}>Gas</div>
                 <div className={`text-[#555555] text-4xl font-extrabold`}>{gas} %</div>
                 <img src={GasIcon} alt="GasIcon" />
             </div>
