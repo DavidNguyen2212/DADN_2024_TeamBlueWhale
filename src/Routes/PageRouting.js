@@ -10,6 +10,7 @@ import Help from "../Pages/Help/Help";
 const publicRoutes = [
     {role: "", path: "", component: HomeNoLogin, layout: "beforeLogin"},
     {role: "", path: "/", component: HomeNoLogin, layout: "beforeLogin"},
+    {role: "", path: "/DADN_2024_TeamBlueWhale", component: HomeNoLogin, layout: "beforeLogin"},
     {role: "", path: "/Login", component: Login}
 ]
 
