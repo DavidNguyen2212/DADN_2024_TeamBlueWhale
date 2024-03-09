@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/DADN_2024_TeamBlueWhale/static/css/main.46e964da.css",
-    "main.js": "/DADN_2024_TeamBlueWhale/static/js/main.79013955.js",
+    "main.css": "/DADN_2024_TeamBlueWhale/static/css/main.5b5057f4.css",
+    "main.js": "/DADN_2024_TeamBlueWhale/static/js/main.3d7067c8.js",
     "static/js/453.52edb8fc.chunk.js": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js",
     "static/media/gas.svg": "/DADN_2024_TeamBlueWhale/static/media/gas.b80a7d30fcd152b7c6c4a0e00c0b4b6c.svg",
     "index.html": "/DADN_2024_TeamBlueWhale/index.html",
-    "main.46e964da.css.map": "/DADN_2024_TeamBlueWhale/static/css/main.46e964da.css.map",
-    "main.79013955.js.map": "/DADN_2024_TeamBlueWhale/static/js/main.79013955.js.map",
+    "main.5b5057f4.css.map": "/DADN_2024_TeamBlueWhale/static/css/main.5b5057f4.css.map",
+    "main.3d7067c8.js.map": "/DADN_2024_TeamBlueWhale/static/js/main.3d7067c8.js.map",
     "453.52edb8fc.chunk.js.map": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.46e964da.css",
-    "static/js/main.79013955.js"
+    "static/css/main.5b5057f4.css",
+    "static/js/main.3d7067c8.js"
   ]
 }
