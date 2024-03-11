@@ -1,20 +1,21 @@
 import { createContext, useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
-// import styles from "./Sidebar.module.css"
 import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
-// import { ChevronFirst, MoreVertical, ChevronLast, SidebarCloseIcon } from 'lucide-react'
+import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 
-const SidebarContext = createContext()
+export const SidebarContext = createContext()
+
 export default function Sidebar({ children }) {
     const [expanded, setExpanded] = useState(false)
+    const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
 
     return (
-        <aside className="h-screen flex min-h-screen bottom-0">
-            <nav className="h-full flex flex-col border-r shadow-sm bg-[#09006F]">
+        <aside className="h-screen flex min-h-screen">
+            <nav className="fixed bottom-0 top-0 h-full flex flex-col border-r shadow-sm bg-[#09006F]">
                 <div className={`p-4 pb-2 flex ${expanded?"flex-row mb-11":"flex-col mb-4"}  justify-between`}>
                     <div className={`${expanded?"ml-2":"flex justify-center"} cursor-pointer `}>
-                        <NavLink to={"/Home"}>{<HomeIcon/>}</NavLink>
+                        <NavLink onClick={() => setShowSideBar(false)} to={"/Home"}>{<HomeIcon/>}</NavLink>
                     </div>
                     <span className={`overflow-hidden flex justify-center items-end text-white
                 ${expanded ? "w-52 font-extrabold text-2xl" : "mt-2 text-[11px] font-semibold"}`}>SMART HOME
@@ -32,11 +33,13 @@ export default function Sidebar({ children }) {
     )
 };
 
-export function SidebarItem({icon, text, path, alert}) {
+export function SidebarItem({func, icon, text, path, alert}) {
+    const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
+
     const {expanded} = useContext(SidebarContext)
     return (
-    <NavLink to = {path}>
-        <li className={` relative flex items-center py-2 px-3 my-1 
+    <NavLink onClick={() => setShowSideBar(false)} to={path}>
+        <li className={`relative flex items-center py-2 px-3 my-1 
             font-medium rounded-md cursor-pointer
             transition-colors group ${
                 (window.location.pathname === path)? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800" :

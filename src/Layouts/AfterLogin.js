@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, createContext } from "react";
 import FullSidebar from "../Components/Sidebar/FullSidebar";
 
-
+export const OpenSidebarContext = createContext()
 const AfterLogin = ({children, role}) => {
     const elementRef = useRef();
     const [showSideBar, setShowSideBar] = useState(true);
@@ -13,14 +13,14 @@ const AfterLogin = ({children, role}) => {
           !e.target.matches("#Header_MenuIcon") &&
           !e.target.matches("svg") &&
           !e.target.matches("path") &&
-          window.innerWidth <= 1280
+          window.innerWidth <= 1024
         ) {
           setShowSideBar(false);
         }
     };
     
     useEffect(() => {
-        if (window.innerWidth > 1280) {
+        if (window.innerWidth > 1024) {
           setShowSideBar(true);
         } else {
           setShowSideBar(false);
@@ -33,21 +33,23 @@ const AfterLogin = ({children, role}) => {
     }, []);
     
     useEffect(() => {
-        setPaddingLeft("pl-[66px]");
-        if (window.innerWidth > 1280 && showSideBar) {
+        setPaddingLeft("pl-[0px]");
+        if (window.innerWidth > 1024 && showSideBar) {
           setPaddingLeft("pl-[108px]");
         }
       }, [showSideBar]);
 
     return (
-      <div>
-        <div className="w-full flex relative">
-            <FullSidebar></FullSidebar>
-            <div className={`Main_Container ${paddingLeft} w-full bg-[#f8f9fa]`}>
-              {children}  
-            </div>
+      <OpenSidebarContext.Provider value={{showSideBar, setShowSideBar}}>
+        <div className="w-[100vw] h-[100vh]">
+          <div className="w-full h-full flex flex-row relative gap-0">
+              <FullSidebar showSideBar={showSideBar}></FullSidebar>
+              <div className={`Main_Container ${paddingLeft} w-full bg-[#f8f9fa]`}>
+                {children}  
+              </div>
+          </div>
         </div>
-      </div>
+      </OpenSidebarContext.Provider>
     );
 }
 export default AfterLogin;
