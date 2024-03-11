@@ -1,0 +1,12 @@
+/* .SidebarHide {
+    transform: translateX(-340px);
+} */
+
+@media screen and (max-width: 1280px) {
+    .SideBarHide {
+      transform: translateX(-340px);
+    }
+    .Main_Container {
+      padding-left: 0;
+    }
+  }

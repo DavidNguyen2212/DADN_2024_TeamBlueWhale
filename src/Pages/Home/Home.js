@@ -18,12 +18,12 @@ const Home = () => {
         <div className="Home mb-5">
       <div className={`${styles.big_cover} relative w-full min-h-[400px]`}>
         <div className={`${styles.slider__content} absolute text-center text-[#0f6cbf] left-1/2 top-[10%]`}>
-          <h1 className={`${styles.slider__heading} text-base text-[#2196f3] mb-1 md:text-2xl lg:text-3xl`}>
-            TRƯỜNG ĐẠI HỌC BÁCH KHOA - ĐHQG TP.HCM
+          <h1 className={`${styles.slider__heading} md:tracking-widest tracking-tighter text-[14px] text-[#2196f3] mb-1 sm:text-xl md:text-2xl lg:text-3xl`}>
+            TRƯỜNG ĐẠI HỌC BÁCH KHOA TP.HCM
           </h1>
         </div>
       </div>
-      <div className=" bg-[white] shadow-sm mt-0 max-w-[1280px] mx-auto px-[10px] md:px-[20px]">
+      <div className="bg-[white] shadow-sm mt-0 max-w-[1280px] mx-auto px-[10px] md:px-[20px]">
         <h2 className="w-full text-2xl md:text-3xl pb-2 lg:text-4xl text-center font-semibold text-[#367fa9]  pt-[50px]"> 
           <span className="border-[#367fa9] border-b-4">DỊCH VỤ CỦA CHÚNG TÔI</span>
         </h2>
@@ -59,18 +59,18 @@ const Home = () => {
             </p>
           </div>
         </div>
-        <div className="max-w-[1280px] px-[10px]   md:px-[20px] mx-auto">
+        <div className="max-w-[1280px] w-full px-[0px] md:px-[20px] mx-auto">
           <h2 className="text-2xl md:text-3xl lg:text-4xl text-center font-semibold text-[#367fa9] mb-8 mt-[50px]">
           <span className="border-[#367fa9] border-b-4">ĐẶC ĐIỂM NỔI BẬT</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 px-8 md:px-16 text-[16px] md:text-[20px]">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 px-8 md:px-16 text-[16px] md:text-[20px]">
             <div className="text-center border border-black rounded-2xl p-4 shadow-xl">
               <FontAwesomeIcon icon={faShieldHalved} size="3x" />
               <p className=" text-[18px] md:text-[24px] mt-3  font-semibold my-2">
                 Bảo mật
               </p>
-              <p className="  font-normal">
-                Xác thực qua tài khoản của nhà trường
+              <p className="font-normal">
+              Xác thực tài khoản & khuôn mặt của bạn và người thân
               </p>
             </div>
             <div className="text-center border border-black rounded-2xl p-4 shadow-xl">
@@ -78,8 +78,8 @@ const Home = () => {
               <p className=" text-[18px] md:text-[24px] mt-3   font-semibold my-2">
                 Hiệu suất
               </p>
-              <p className="  font-normal">
-                Hệ thống realtime, tốc độ phản hồi nhanh
+              <p className="font-normal">
+              Hệ thống phản hồi nhanh nhờ Server Adafruit
               </p>
             </div>
             <div className="text-center border border-black rounded-2xl p-4 shadow-xl">
@@ -88,7 +88,7 @@ const Home = () => {
                 Tương thích
               </p>
               <p className="font-normal">
-                Hiển thị tốt trên đa dạng thiết bị
+              Hiển thị tốt trên đa dạng thiết bị: điện thoại, laptop, tablet...
               </p>
             </div>
             <div className="text-center border border-black rounded-2xl p-4 shadow-xl">
@@ -111,7 +111,7 @@ const Home = () => {
           </h2>
           <div className="w-full ">
             <div className="flex flex-col mt-3 md:flex-row items-center justify-center">
-              <div className="w-[50%] md:w-[35%] flex items-center justify-center md:justify-start">
+              <div className="w-[50%] md:w-[35%] flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faSchool}
                   size="6x"
@@ -133,7 +133,7 @@ const Home = () => {
             </div>
 
             <div className="flex flex-col mt-3 md:flex-row items-center justify-center">
-              <div className="w-[50%] md:w-[35%] flex items-center justify-center md:justify-start">
+              <div className="w-[50%] md:w-[35%] flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faFileShield}
                   size="6x"
@@ -145,7 +145,7 @@ const Home = () => {
                 <h3 className="text-[#1B9B2F] text-3xl font-semibold mb-2 text-center md:text-left">
                   Bảo mật thông tin
                 </h3>
-                <p className="text-justify mx-auto text-[16px] md:text-[20px]  w-[90%] md:w-[80%]">
+                <p className="text-justify mx-auto text-[16px] md:text-[20px] w-[90%] md:w-[80%]">
                   Đối với các sinh viên, việc in ấn bên ngoài đã trở thành điều
                   quen thuộc. Khung cảnh một tài khoản zalo bị bỏ quên chưa đăng
                   xuất trên một máy tính cũng quen thuộc không kém. Hệ thống in
@@ -156,7 +156,7 @@ const Home = () => {
             </div>
 
             <div className="flex flex-col mt-3 md:flex-row items-center justify-center">
-              <div className="w-[50%] md:w-[35%] flex items-center justify-center md:justify-start">
+              <div className="w-[50%] md:w-[35%] flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faGaugeHigh}
                   size="6x"
@@ -165,7 +165,7 @@ const Home = () => {
                 />
               </div>
               <div className="w-[100%] md:w-[65%] flex flex-col items-center justify-center  mt-4">
-                <h3 className="text-[#1B9B2F] w-[80%] text-3xl font-semibold mb-2 text-center md:text-left">
+                <h3 className="text-[#1B9B2F] text-3xl font-semibold mb-2 text-center md:text-left">
                   Tối ưu thời gian
                 </h3>
                 <p className="text-justify mx-auto text-[16px] md:text-[20px] w-[90%] md:w-[80%]">

@@ -1,0 +1,8 @@
+.Main_Container {
+    padding-left: 108px;
+}
+@media screen and (max-width:1280px) {
+    .Main_Container {
+        padding-left: 0px;
+    }
+}
