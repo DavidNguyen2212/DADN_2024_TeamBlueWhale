@@ -10,13 +10,24 @@ import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 
 const Header = ({pageName}) => {
     const [visibleButton, setVisibleButton] = useState(true)
-    useEffect (()=>{
-        if (window.innerWidth > 1024)
-            setVisibleButton(false)
-    }, [window.innerWidth])
+    useEffect(() => {
+        const handleResize = () => {
+            setVisibleButton(window.innerWidth <= 1280);
+        };
     
+        // Gọi handleResize một lần để cập nhật giá trị ban đầu
+        handleResize();
+    
+        // Thêm sự kiện resize listener
+        window.addEventListener('resize', handleResize);
+    
+        // Cleanup: loại bỏ sự kiện resize listener khi component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
-    console.log(showSideBar)
     return (
         // overflow-auto
         <div className={`Header_Container w-full h-[75px] md:h-[90px] bg-white flex items-center justify-between shadow-md z-50`}>
@@ -37,10 +48,14 @@ const Header = ({pageName}) => {
                     
                 </UserInfoModal>
              
-                {visibleButton && <button id="sidebarSwitch" type="button" onClick={() => setShowSideBar((curr) => !curr)}
-                    className={`px-2 bg-[#6A21A4] rounded`}>
+                {/* {visibleButton && <button id="sidebarSwitch" type="button" onClick={() => setShowSideBar((curr) => !curr)}
+                    className={`${visibleButton? "px-2 bg-[#6A21A4] rounded" : "hidden"}`}>
                     <FontAwesomeIcon size="1x" icon={faBars} color="#FFFFFF"/>
-                </button>}    
+                </button>}     */}
+                <button type="button" onClick={() => setShowSideBar((curr) => !curr)}
+                    className={`${styles.sidebarSwitch}`}>
+                    <FontAwesomeIcon size="1x" icon={faBars} color="#FFFFFF"/>
+                </button>
                
             </div>
         </div>

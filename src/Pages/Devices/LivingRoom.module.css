@@ -12,13 +12,24 @@
     /* stroke-dasharray: 1000; */
     /* stroke-dashoffset: 1000; */
     /* animation: anm 2s linear forwards; */
+    
 }
 
 ._svg {
     position: absolute;
     top: 0;
-    left: 0
+    left: 0;
 }
+
+/* @media screen and (max-width: 1024px) {
+    ._svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px; 
+        height: 200px;
+    }
+} */
 
 /* @keyframes anm {
     100% {

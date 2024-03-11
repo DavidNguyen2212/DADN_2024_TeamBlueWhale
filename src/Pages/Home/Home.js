@@ -18,8 +18,8 @@ const Home = () => {
         <div className="Home mb-5">
       <div className={`${styles.big_cover} relative w-full min-h-[400px]`}>
         <div className={`${styles.slider__content} absolute text-center text-[#0f6cbf] left-1/2 top-[10%]`}>
-          <h1 className={`${styles.slider__heading} md:tracking-widest text-base text-[#2196f3] mb-1 md:text-2xl lg:text-3xl`}>
-            TRƯỜNG ĐẠI HỌC BÁCH KHOA - ĐHQG TP.HCM
+          <h1 className={`${styles.slider__heading} md:tracking-widest tracking-tighter text-[14px] text-[#2196f3] mb-1 sm:text-xl md:text-2xl lg:text-3xl`}>
+            TRƯỜNG ĐẠI HỌC BÁCH KHOA TP.HCM
           </h1>
         </div>
       </div>
@@ -69,7 +69,7 @@ const Home = () => {
               <p className=" text-[18px] md:text-[24px] mt-3  font-semibold my-2">
                 Bảo mật
               </p>
-              <p className="  font-normal">
+              <p className="font-normal">
               Xác thực tài khoản & khuôn mặt của bạn và người thân
               </p>
             </div>
@@ -165,7 +165,7 @@ const Home = () => {
                 />
               </div>
               <div className="w-[100%] md:w-[65%] flex flex-col items-center justify-center  mt-4">
-                <h3 className="text-[#1B9B2F] w-[80%] text-3xl font-semibold mb-2 text-center md:text-left">
+                <h3 className="text-[#1B9B2F] text-3xl font-semibold mb-2 text-center md:text-left">
                   Tối ưu thời gian
                 </h3>
                 <p className="text-justify mx-auto text-[16px] md:text-[20px] w-[90%] md:w-[80%]">

@@ -1,3 +1,19 @@
+
+@media screen and (max-width: 1280px) {
+  .sidebarSwitch {
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 4px;
+    background-color: #6A21A4;
+    margin-right: 3px
+  }
+}
+/* .sidebarSwitch {
+// Khi ta gán cho media screen thì nếu không nói gì lúc bình thường, thẻ đó sẽ không hiển thị luôn!
+// Phần này được comment lại vì không cần thiết  
+  display: none;
+} */
+
 @media screen and (max-width: 640px) {
     .Header_UserName {
       display: none;

@@ -162,7 +162,7 @@ const HomeNoLogin = () => {
                 />
               </div>
               <div className="w-[100%] md:w-[65%] flex flex-col items-center justify-center  mt-4">
-                <h3 className="text-[#1B9B2F] w-[80%] text-3xl font-semibold mb-2 text-center md:text-left">
+                <h3 className="text-[#1B9B2F] text-3xl font-semibold mb-2 text-center md:text-left">
                   Tối ưu thời gian
                 </h3>
                 <p className="text-justify mx-auto text-[16px] md:text-[20px] w-[90%] md:w-[80%]">

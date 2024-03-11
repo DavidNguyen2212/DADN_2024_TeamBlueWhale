@@ -4,7 +4,7 @@ import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
 import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 
-export const SidebarContext = createContext()
+export const ExpandSidebarContext = createContext()
 
 export default function Sidebar({ children }) {
     const [expanded, setExpanded] = useState(false)
@@ -25,9 +25,9 @@ export default function Sidebar({ children }) {
                     </button>
                 </div>
 
-                <SidebarContext.Provider value={{expanded}}>
+                <ExpandSidebarContext.Provider value={{expanded}}>
                     <ul className="flex-1 px-3">{ children }</ul>
-                </SidebarContext.Provider>
+                </ExpandSidebarContext.Provider>
             </nav>
         </aside>
     )
@@ -35,8 +35,8 @@ export default function Sidebar({ children }) {
 
 export function SidebarItem({func, icon, text, path, alert}) {
     const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
+    const {expanded} = useContext(ExpandSidebarContext)
 
-    const {expanded} = useContext(SidebarContext)
     return (
     <NavLink onClick={() => setShowSideBar(false)} to={path}>
         <li className={`relative flex items-center py-2 px-3 my-1 

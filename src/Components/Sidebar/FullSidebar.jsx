@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 
 const FullSidebar = ({showSideBar}) => {
-    const {showSidebar, setShowSidebar} = useContext(OpenSidebarContext)
+    // const {showSidebar, setShowSidebar} = useContext(OpenSidebarContext)
     return (
     <div style={{transition:"transform 0.4s ease"}} className={`z-50 ${showSideBar ? "" : styles.SideBarHide}`}>
         <Sidebar>
