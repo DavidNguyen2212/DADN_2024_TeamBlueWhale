@@ -197,3 +197,131 @@ export const LightIcon = () => (
         </svg>
     </div>
 );
+
+export const AccidentIcon = () => (
+    <div className="cursor-pointer">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="6" fill="url(#paint0_linear_111_346)"/>
+            <path d="M25 15L15 25M15 15L24.9999 25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <defs>
+            <linearGradient id="paint0_linear_111_346" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E88B76"/>
+            <stop offset="1" stop-color="#CA5048"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const AccidentIconSmall = () => (
+    <div className="cursor-pointer">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="6" fill="url(#paint0_linear_244_123)"/>
+            <path d="M18.75 11.25L11.25 18.75M11.25 11.25L18.7499 18.75" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <defs>
+            <linearGradient id="paint0_linear_244_123" x1="15" y1="0" x2="15" y2="30" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E88B76"/>
+            <stop offset="1" stop-color="#CA5048"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const ChangeIcon = () => (
+    <div className="cursor-pointer">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="6" fill="url(#paint0_linear_112_385)"/>
+            <path d="M14.1667 20.8333L17.5 24.1666L25.8334 15.8333" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+            <linearGradient id="paint0_linear_112_385" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#48CA93"/>
+            <stop offset="1" stop-color="#48BACA"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const ChangeIconSmall = () => (
+    <div className="cursor-pointer">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="6" fill="url(#paint0_linear_244_131)"/>
+            <path d="M10.625 15.625L13.125 18.125L19.375 11.875" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+            <linearGradient id="paint0_linear_244_131" x1="15" y1="0" x2="15" y2="30" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#48CA93"/>
+            <stop offset="1" stop-color="#48BACA"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const NotifyIconSmall = () => (
+    <div className="cursor-pointer">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="6" fill="url(#paint0_linear_244_127)"/>
+            <path d="M15 20V13.75" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="1.25" cy="1.25" r="1.25" transform="matrix(1 0 0 -1 13.75 11.25)" fill="white"/>
+            <defs>
+            <linearGradient id="paint0_linear_244_127" x1="15" y1="-5.625" x2="15" y2="35" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#4DCAFF"/>
+            <stop offset="1" stop-color="#4EA3E0"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const NotifyIcon = () => (
+    <div className="cursor-pointer">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="6" fill="url(#paint0_linear_112_455)"/>
+            <path d="M20 26.6667V18.3334" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <ellipse cx="1.66667" cy="1.66667" rx="1.66667" ry="1.66667" transform="matrix(1 0 0 -1 18.3333 15)" fill="white"/>
+            <defs>
+            <linearGradient id="paint0_linear_112_455" x1="20" y1="-7.5" x2="20" y2="46.6667" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#4DCAFF"/>
+            <stop offset="1" stop-color="#4EA3E0"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const WarningIcon = () => (
+    <div className="cursor-pointer">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="6" fill="url(#paint0_linear_112_510)"/>
+            <path d="M20 15V23.3333" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <ellipse cx="20" cy="28.3334" rx="1.66667" ry="1.66667" fill="white"/>
+            <defs>
+            <linearGradient id="paint0_linear_112_510" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#DBA948"/>
+            <stop offset="0.0001" stop-color="#FFC46B"/>
+            <stop offset="1" stop-color="#FFA318"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+export const WarningIconSmall = () => (
+    <div className="cursor-pointer">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="6" fill="url(#paint0_linear_244_134)"/>
+            <path d="M15 11.25V17.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="15" cy="21.25" r="1.25" fill="white"/>
+            <defs>
+            <linearGradient id="paint0_linear_244_134" x1="15" y1="0" x2="15" y2="30" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#DBA948"/>
+            <stop offset="0.0001" stop-color="#FFC46B"/>
+            <stop offset="1" stop-color="#FFA318"/>
+            </linearGradient>
+            </defs>
+        </svg>
+    </div>
+)
+
+

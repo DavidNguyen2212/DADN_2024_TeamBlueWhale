@@ -3,6 +3,7 @@ import LivingRoom from "./LivingRoom";
 import BedRoom from "./BedRoom";
 import DiningRoom from "./DiningRoom";
 import Header from "../../Components/Header/Header";
+import styles from "./Device.module.css"
 
 
 const Devices = () => {
@@ -17,7 +18,7 @@ const Devices = () => {
     <div className={`bg-white`}>
       <Header pageName={"Thiết bị"}></Header>
 
-      <select className="ml-8 mt-4 outline-none text-2xl font-bold w-[250px] cursor-pointer"
+    <select className={`${styles.select_dropdown} ml-8 mt-4 outline-none text-2xl font-bold w-[250px] cursor-pointer`}
         onChange={handleRoomChange} value={room_type}>
         {rooms.map((room, index) => (
           <option key={index} value={room} onClick={() => setRoom_type(room)}>{room}</option>

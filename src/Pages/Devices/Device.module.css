@@ -1,0 +1,7 @@
+.select_dropdown {
+  transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển đổi màu nền */
+}
+
+.select_dropdown:focus {
+  background-color: #f0f0f0; /* Màu nền mới khi select được focus */
+}
