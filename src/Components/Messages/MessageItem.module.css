@@ -1,0 +1,29 @@
+._Change {
+    border-radius: 12px;
+    border: 2px solid #48C1B5;
+}
+
+._time_change {
+    color: rgba(0, 0, 0, 0.4);
+    font-weight: 600;
+}
+
+._Notify {
+    border-radius: 12px;
+    border: 2px solid #9DC0EE;
+}
+
+._Accident {
+    border-radius: 12px;
+    border: 2px solid #F4B0A1;
+}
+
+._Warning {
+    border-radius: 12px;
+    border: 2px solid #F7D9A4;
+    /* transition: transform 1s ease; */
+    transition: opacity 0.5s ease;
+}
+.hidden {
+  transform: translateX(-1000px);
+}

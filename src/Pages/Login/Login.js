@@ -11,7 +11,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setRole("family_member");
-    navigate("/Home");
+    navigate("/Dashboard");
   }
 
   return (

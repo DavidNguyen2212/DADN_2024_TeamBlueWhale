@@ -1,0 +1,12 @@
+._goodEvening {
+    background: url("../../Assets/images/Rectangle\ 2.svg") top center / cover no-repeat;
+
+}
+
+._bedroomCam {
+    background: url("../../Assets/images/bedroom.jpg") top center / cover no-repeat;
+}
+
+.door {
+    transform: translate(-50%, -50%);
+}

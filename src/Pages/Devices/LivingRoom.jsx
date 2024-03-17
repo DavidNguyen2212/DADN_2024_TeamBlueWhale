@@ -18,6 +18,7 @@ export default function LivingRoom() {
     const [colorMinus, setColorMinus] = useState("#E7D5FF");
     const [colorPlus, setColorPlus] = useState("#E7D5FF");
     const [tempAC, setTempAC] = useState(22)
+    const isFold = useMediaQuery({maxWidth : 290 })
     const isMobile = useMediaQuery({ maxWidth: 768 });
     const isUnderLarge = useMediaQuery({ maxWidth: 1023 })
     const [dashArray, setDashArray] = useState(isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2);
@@ -61,15 +62,16 @@ export default function LivingRoom() {
             <div className={`w-full pt-4 pb-4 lg:pb-0 lg:h-[36rem] xl:w-[52rem] bg-[#F7F1FF] rounded-3xl`}>
                 {/* AirCond Heading area */}
                 <div className={`pl-4 pr-4 lg:pr-8 flex flex-row items-center justify-between`}>
-                    <div className={`flex flex-row items-center gap-2 md:gap-4`}><AirConditionerIcon /><span className={`font-medium`}>Air Conditioner</span></div>      
+                    <div className={`flex flex-row items-center gap-2 md:gap-4`}><AirConditionerIcon /><span className={`${isFold ? "text-sm font-medium" : "font-medium"}`}>Air Conditioner</span></div>      
                     <div className="w-1/3 gap-2 md:gap-3">
                         <div className="flex flex-row justify-end gap-1 w-full">
-                            {onAC === "on" ? 
+                            {!isFold &&
+                            (onAC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Hoạt động{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                                 Đang tắt{" "}
-                            </p>}
+                            </p>)}
 
                             <div className="switch flex">
                                 <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
@@ -249,7 +251,9 @@ export default function LivingRoom() {
             </div>
         </div>
 
+        
         {/* Temp - Humid - Gas block */}
+        {!isFold && 
         <div className={`w-full flex flex-row gap-3 lg:h-full lg:flex-col lg:gap-6 px-4 justify-between lg:justify-normal`}>
             <div className={`w-full h-auto lg:w-[260px] pt-2 rounded-3xl flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium`}>Temperature</div>
@@ -271,7 +275,34 @@ export default function LivingRoom() {
                 {isMobile && <img src={GasIconSmall} alt="GasIconSmall" />}
                 {!isMobile && <img src={GasIcon} alt="GasIcon" />} 
             </div>
-        </div>
+        </div>}
+
+        {isFold && 
+        <div className={`w-full flex flex-col gap-3 px-4 justify-between`}>
+            <div className={`w-full flex flex-row gap-3 justify-between`}>
+                <div className={`w-full h-auto lg:w-[260px] pt-2 rounded-3xl flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
+                    <div className={`font-medium`}>Temperature</div>
+                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{temperature > 0 ? `+ ${temperature}`:`- ${temperature}`} {'\u00b0'}C</div>
+                    {/* Hiển thị TemperatureIconSmall cho màn hình nhỏ hơn hoặc bằng md */}
+                    {isMobile && <TemperatureIconSmall />}
+                    {/* Hiển thị TemperatureIcon cho màn hình lớn hơn md */}
+                    {!isMobile && <TemperatureIcon />}  
+                </div>
+                <div className={`w-full h-auto pt-2 mb-1. rounded-tl-3xl rounded-tr-3xl rounded-bl-[100px] rounded-br-[100px] flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
+                    <div className={`font-medium lg:mb-2`}>Humidity</div>
+                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{humid} %</div>
+                    {isMobile && <HumidIconSmall />}
+                    {!isMobile && <HumidIcon />} 
+                </div>
+            </div>
+            
+            <div className={`w-full h-auto lg:w-[260px] lg:h-[330px] pt-2 rounded-3xl flex flex-col justify-between items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
+                <div className={`font-medium mb-0`}>Gas</div>
+                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{gas} %</div> 
+                {isMobile && <img src={GasIconSmall} alt="GasIconSmall" />}
+                {!isMobile && <img src={GasIcon} alt="GasIcon" />} 
+            </div>
+        </div>}
     </div>
     )
 }

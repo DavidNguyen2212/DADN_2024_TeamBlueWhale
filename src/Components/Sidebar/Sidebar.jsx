@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
 import { OpenSidebarContext } from "../../Layouts/AfterLogin";
+import styles from "./Sidebar.module.css"
 
 export const ExpandSidebarContext = createContext()
 
@@ -11,8 +12,8 @@ export default function Sidebar({ children }) {
     const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
 
     return (
-        <aside className="h-screen flex min-h-screen">
-            <nav className="fixed bottom-0 top-0 h-full flex flex-col border-r shadow-sm bg-[#09006F]">
+        <aside className={`h-screen flex min-h-screen`}>
+            <nav className={`fixed h-full overflow-y-auto overflow-x-clip flex flex-col border-r shadow-sm bg-[#09006F]`}>
                 <div className={`p-4 pb-2 flex ${expanded?"flex-row mb-11":"flex-col mb-4"}  justify-between`}>
                     <div className={`${expanded?"ml-2":"flex justify-center"} cursor-pointer `}>
                         <NavLink onClick={() => setShowSideBar(false)} to={"/Home"}>{<HomeIcon/>}</NavLink>

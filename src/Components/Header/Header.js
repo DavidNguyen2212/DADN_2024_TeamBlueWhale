@@ -32,7 +32,7 @@ const Header = ({pageName}) => {
         // overflow-auto
         <div className={`Header_Container w-full h-[75px] md:h-[90px] bg-white flex items-center justify-between shadow-md z-50`}>
             <div className={`Page_name w-1/2 flex items center transition-all`}>
-                <h1 className="w-full flex items-center justify-center text-black font-bold ml-2 text-2xl md:text-4xl lg:text-5xl bg-[#E7D5FF] h-[60px] md:h-[70px] border-r-[0.1px]  border-b-[0.1px] border-white rounded-es-3xl rounded-se-3xl">
+                <h1 className="w-full flex items-center justify-center text-black font-bold ml-2 text-2xl md:text-4xl lg:text-[40px] bg-[#E7D5FF] h-[60px] md:h-[70px] border-r-[0.1px]  border-b-[0.1px] border-white rounded-es-3xl rounded-se-3xl">
                     {pageName}
                 </h1>
             </div>

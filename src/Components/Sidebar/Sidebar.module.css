@@ -1,0 +1,12 @@
+/* .Sidebar_Scroll {
+    position: fixed;
+    bottom: 0px;
+    top: 0px
+}
+
+@media screen and (max-height: 653px) {
+    .Sidebar_Scroll {
+        position: fixed;
+        bottom: 0px;
+    }
+} */
