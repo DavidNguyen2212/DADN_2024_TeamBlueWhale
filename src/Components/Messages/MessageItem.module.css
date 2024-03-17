@@ -21,8 +21,9 @@
 ._Warning {
     border-radius: 12px;
     border: 2px solid #F7D9A4;
-    transition: transform 1s ease;
+    /* transition: transform 1s ease; */
+    transition: opacity 0.5s ease;
 }
 .hidden {
-  transform: translateX(2000px);
+  transform: translateX(-1000px);
 }

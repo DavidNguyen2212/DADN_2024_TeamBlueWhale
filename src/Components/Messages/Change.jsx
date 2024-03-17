@@ -10,12 +10,12 @@ const Change = (props) => {
     const isSmall = useMediaQuery({ maxWidth: 640 });
 
     return (
-        <div className={`${styles._Change} w-full md:w-3/4  bg-[#F6FFF9] flex flex-row gap-3 sm:gap-4 md:gap-8 px-3 py-3 sm:px-6 sm:py-6`}>
+        <div className={`${styles._Change} w-full md:w-3/4  bg-[#F6FFF9] flex flex-row gap-3 sm:gap-4 md:gap-8 px-3 py-3 sm:px-5 sm:py-5 shadow-lg`}>
             {/* Icon and label */}
             <div>
                 {isSmall ? <ChangeIconSmall /> : <ChangeIcon />}
             </div>
-            <div className={`flex flex-col gap-2 text-left w-[80%]`}>
+            <div className={`flex flex-col gap-1 text-left w-[80%]`}>
                 <span className={`font-bold text-base sm:text-xl md:text-2xl lg:text-3xl tracking-wide`}>THAY ĐỔI THÀNH CÔNG</span>
                 <p className={`${styles._time_change}`}>{formattedTime}</p>
                 <div className={`text-base md:text-xl`}>Bạn đã thay đổi trạng thái của {props.device}, tại {props.room}.</div>
