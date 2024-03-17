@@ -1,4 +1,4 @@
-import { Camera, Door, MemberIcon, ShorcutsIcon, Speech, TempIcon, TvIcon, WifiIcon, Lock, Unlock } 
+import { Camera, Door, MemberIcon, ShorcutsIcon, Speech, TempIcon, TvIcon, WifiIcon, Lock, Unlock, FastLook } 
 from "../../Assets/icons/Icon";
 import Header from "../../Components/Header/Header";
 import styles from "./Dashboard.module.css";
@@ -15,7 +15,7 @@ import door_open from "../../Assets/images/door_open.jpg"
 import door_closed from "../../Assets/images/door_closed.jpg"
 import { useState, useEffect } from "react";
 import ReactSwitch from "react-switch";
-import {SettingsIcon, ThermometerIcon, ThermometerSnowflakeIcon, ThermometerSunIcon } from "lucide-react"
+import {SettingsIcon, ThermometerIcon, ThermometerSnowflakeIcon, ThermometerSunIcon, Diw } from "lucide-react"
 import { UserData } from "../../Utils/Data";
 import Chart from "../../Components/Dashboard/Chart";
 
@@ -33,16 +33,42 @@ const Dashboard = () => {
   }, []);
 
   // Line chart
-  const [userData, setUserData] = useState({
+  const [element, setElement] = useState("Nhiệt độ");
+  const elements = ["Nhiệt độ", "Độ ẩm", "Ánh sáng"];
+  const handleEleChange = (event) => {
+    setElement(event.target.value); // Lưu giá trị của phòng được chọn vào state
+  };
+  const [userData, setUserData] = useState([{
     labels: UserData.map((data) => data.hour),
-    dataset: [{
+    datasets: [{
       label: "Nhiệt độ",
       data: UserData.map((data) => data.temperature),
       backgroundColor: ["red"],
       borderColor: "red",
-      borderWidth: 1
-    }]
-  }) 
+      borderWidth: 1,
+      tension: 0.3
+    }]},
+    {
+      labels: UserData.map((data) => data.hour),
+      datasets: [{
+        label: "Độ ẩm",
+        data: UserData.map((data) => data.humidity),
+        backgroundColor: ["blue"],
+        borderColor: "blue",
+        borderWidth: 1,
+        tension: 0.3
+      }]},
+      {
+        labels: UserData.map((data) => data.hour),
+        datasets: [{
+          label: "Ánh sáng",
+          data: UserData.map((data) => data.lightStrength),
+          backgroundColor: ["orange"],
+          borderColor: "orange",
+          borderWidth: 1,
+          tension: 0.3
+      }]}
+    ]);
 
   // Door
   const [openDoor, setOpenDoor] = useState("on");     // sau này cần có thêm status
@@ -107,34 +133,34 @@ const Dashboard = () => {
               <div className={`flex flex-col gap-2 justify-center items-center`}>
                 <div className={`flex flex-row gap-8 justify-center items-center`}>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>David</span>
                     {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad2} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad2} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>Bang</span>
                     {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad3} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad3} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>Bao</span>
                     {/* <span>Nguyen</span> */}
                   </div>
                 </div>
                 <div className={`flex flex-row gap-8 justify-center items-center`}>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad4} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad4} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>Qui</span>
                     {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad5} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad5} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>Cuong</span>
                     {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
-                    <img src={chad6} className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
+                    <img src={chad6} alt="member" className={`w-[70px] h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-bold text-xl`}>Mr.Thinh</span>
                     {/* <span>Nguyen</span> */}
                   </div>
@@ -149,10 +175,28 @@ const Dashboard = () => {
             {/* Power & Shorcuts*/}
             <div className={`w-[60%] flex flex-row gap-4`}>
               {/* Power */}
-              <div className={`w-[60%] bg-[#F7F1FF] rounded-3xl`}>
-                <div className={`w-full`}>
-                  <LineChart chartData={userData} />
-                </div> 
+              <div className={`w-[60%] bg-[#F7F1FF] rounded-3xl px-4 py-4 flex flex-col gap-8`}>
+                {/* <div className={`w-[80%]`}> */}
+                  <div className={`flex flex-row justify-between`}>
+                    <div className={`flex flex-row gap-4 items-center`}>
+                      <FastLook />
+                      <span className={`font-bold text-xl tracking-wide`}>Fast Look</span>
+                    </div>
+                    {/* <button className={`flex justify-center items-center`}>
+                      <span>Nhiệt độ</span><SettingsIcon />
+                    </button> */}
+                    <select className={`${styles.select_dropdown} bg-[#F7F1FF] outline-none text-xl font-bold cursor-pointer`}
+                    onChange={handleEleChange} value={element}>
+                    {elements.map((ele, index) => (
+                    <option key={index} value={ele} onClick={() => setElement(ele)}> {ele} </option>
+                    ))}
+                    </select>
+                  </div>
+                  {element === "Nhiệt độ" && <Chart chartData={userData[0]} />}
+                  {element === "Độ ẩm" && <Chart chartData={userData[1]} />}
+                  {element === "Ánh sáng" && <Chart chartData={userData[2]} />}
+
+                {/* </div>  */}
               </div>
               {/* Shorcuts */}
               <div className="flex flex-col gap-4 bg-[#F7F1FF] rounded-3xl w-[40%]">
