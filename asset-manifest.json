@@ -1,17 +1,30 @@
 {
   "files": {
-    "main.css": "/DADN_2024_TeamBlueWhale/static/css/main.f1cf8848.css",
-    "main.js": "/DADN_2024_TeamBlueWhale/static/js/main.a5e25be1.js",
+    "main.css": "/DADN_2024_TeamBlueWhale/static/css/main.0091180f.css",
+    "main.js": "/DADN_2024_TeamBlueWhale/static/js/main.972969ad.js",
     "static/js/453.52edb8fc.chunk.js": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js",
+    "static/media/door_open.jpg": "/DADN_2024_TeamBlueWhale/static/media/door_open.c63ef8a0f61fdc4a5ecf.jpg",
+    "static/media/Main entrance.jpg": "/DADN_2024_TeamBlueWhale/static/media/Main entrance.a3c82936f30807c57481.jpg",
+    "static/media/door_closed.jpg": "/DADN_2024_TeamBlueWhale/static/media/door_closed.a5ebf57341cd9599fe93.jpg",
+    "static/media/kitchen.jpg": "/DADN_2024_TeamBlueWhale/static/media/kitchen.c8c1bca3eac0aea7546e.jpg",
+    "static/media/bedroom.jpg": "/DADN_2024_TeamBlueWhale/static/media/bedroom.393ec7512d631fcc31c1.jpg",
+    "static/media/livingroom.jpg": "/DADN_2024_TeamBlueWhale/static/media/livingroom.7c906867974bc6261496.jpg",
+    "static/media/chad4.png": "/DADN_2024_TeamBlueWhale/static/media/chad4.b6c4b72205a7b7fcc62e.png",
+    "static/media/chad6.png": "/DADN_2024_TeamBlueWhale/static/media/chad6.b864aa22e5807754d0d2.png",
+    "static/media/Rectangle 2.svg": "/DADN_2024_TeamBlueWhale/static/media/Rectangle 2.9a5574c5a32802fe0799.svg",
     "static/media/gas.svg": "/DADN_2024_TeamBlueWhale/static/media/gas.b80a7d30fcd152b7c6c4a0e00c0b4b6c.svg",
     "static/media/gasSmall.svg": "/DADN_2024_TeamBlueWhale/static/media/gasSmall.8781cd563d9cd8541d8d83dde1761551.svg",
+    "static/media/chad2.png": "/DADN_2024_TeamBlueWhale/static/media/chad2.3e4685bc8b9dab1e9941.png",
+    "static/media/chad5.png": "/DADN_2024_TeamBlueWhale/static/media/chad5.4b1deec449e048dbd022.png",
+    "static/media/chad3.jpg": "/DADN_2024_TeamBlueWhale/static/media/chad3.7f16583969cc84380fb7.jpg",
+    "static/media/chad.jpg": "/DADN_2024_TeamBlueWhale/static/media/chad.facdee0d6817c1c81a3b.jpg",
     "index.html": "/DADN_2024_TeamBlueWhale/index.html",
-    "main.f1cf8848.css.map": "/DADN_2024_TeamBlueWhale/static/css/main.f1cf8848.css.map",
-    "main.a5e25be1.js.map": "/DADN_2024_TeamBlueWhale/static/js/main.a5e25be1.js.map",
+    "main.0091180f.css.map": "/DADN_2024_TeamBlueWhale/static/css/main.0091180f.css.map",
+    "main.972969ad.js.map": "/DADN_2024_TeamBlueWhale/static/js/main.972969ad.js.map",
     "453.52edb8fc.chunk.js.map": "/DADN_2024_TeamBlueWhale/static/js/453.52edb8fc.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f1cf8848.css",
-    "static/js/main.a5e25be1.js"
+    "static/css/main.0091180f.css",
+    "static/js/main.972969ad.js"
   ]
 }
