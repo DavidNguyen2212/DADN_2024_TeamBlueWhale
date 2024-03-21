@@ -1,5 +1,4 @@
 import axios from "axios";
-i
 
 const SmartHomeAPI = axios.create({
     baseURL: process.env.BASE_URL,
