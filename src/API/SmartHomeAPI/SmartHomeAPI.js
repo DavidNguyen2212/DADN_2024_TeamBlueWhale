@@ -1,10 +1,11 @@
 import axios from "axios";
+i
 
 const SmartHomeAPI = axios.create({
-    baseURL: "https://io.adafruit.com/api/v2/david_nguyen7603/feeds",
+    baseURL: process.env.BASE_URL,
     headers: {
     "Content-Type": "application/json",
-    "X-AIO-Key": "aio_cBxc45xtfl1nM9203TzppWRsWAYD"
+    "X-AIO-Key": process.env.HEADER_X_AIO_KEY
   },
 });
 
