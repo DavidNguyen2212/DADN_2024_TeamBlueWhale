@@ -13,28 +13,61 @@ import outside from "../../Assets/images/Main entrance.jpg"
 import kitchen from "../../Assets/images/kitchen.jpg"
 import door_open from "../../Assets/images/door_open.jpg"
 import door_closed from "../../Assets/images/door_closed.jpg"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import ReactSwitch from "react-switch";
 import {SettingsIcon, ThermometerIcon, ThermometerSnowflakeIcon, ThermometerSunIcon } from "lucide-react"
 import { UserData } from "../../Utils/Data";
 import Chart from "../../Components/Dashboard/Chart";
+import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
+import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
 
 
 const Dashboard = () => {
+  const {
+    text, startListening, stopListening, isListening, hasRecognitionSupport
+  } = useSpeechReg()
+  console.log("Nghe: ")
+
+  const [firstLoad, setFirstLoad] = useState(true);
   const isMedium = useMediaQuery({maxWidth: 1024, minWidth: 769});
   const isMobile = useMediaQuery({maxWidth: 768});
 
   const [dateTime, setDateTime] = useState(new Date());
+  const [doorInfo, setDoorInfo] = useState("");
+  const doorInfoRef = useRef("");
+  
   useEffect(() => {
-    // Cập nhật thời gian mỗi giây
-    const intervalID = setInterval(() => {
-      setDateTime(new Date());
-    }, 1000);
+    const fetchDoorState = async() => {
+      const response = await DoorGet();
+      console.log("reponse from Door api: ", response);
+      const value = response?.data?.value;
+      // setDoorInfo(value);
+      doorInfoRef.current = value;
 
-    // Xóa interval khi component bị unmount
-    return () => clearInterval(intervalID);
-  }, []);
+      setOpenDoor(value);
+      setFirstLoad(false);
+    }
+    fetchDoorState();
+  }, [])
+  
+  // useEffect(() => {
+
+  //   // Cập nhật thời gian mỗi giây
+  //   const intervalID = setInterval(() => {
+  //     setDateTime(new Date());
+  //   }, 1000);
+
+  //   // Xóa interval khi component bị unmount
+  //   return () => clearInterval(intervalID);
+  // }, []);
+
+
+  const handleSubmit = async () => {
+    const response = await DoorPost({"value": openDoor});
+    console.log("reponse send to api: ", response);
+  }
+
 
   // Line chart
   const [element, setElement] = useState("Nhiệt độ");
@@ -79,6 +112,16 @@ const Dashboard = () => {
   const toggleDoor = () => {
     setOpenDoor((curr) => (curr === "on" ? "off" : "on"));
   }
+  
+  useEffect(() => {
+    if (!firstLoad) {
+        if (openDoor !== doorInfoRef.current) {
+            // Nếu có sự thay đổi, gọi handleSubmit()
+            handleSubmit();
+            doorInfoRef.current = openDoor;
+        }
+    }
+  }, [openDoor])
 
 
   return (
@@ -208,9 +251,15 @@ const Dashboard = () => {
                     <span className={`font-bold text-lg tracking-wide`}>Voice Command</span>
                   </div>
                   <div className={`flex justify-center items-center`}>
-                    <button className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
+                    <button onClick={startListening} className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
                   </div>
-                  <div className={`italic text-gray-600 flex items-center justify-center`}>Press to command me!</div>
+                  {isListening && 
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>Tôi đang nghe đây...</div>
+                }
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>{text}</div>
+
+                  {/* <div className={`italic text-gray-600 flex items-center justify-center`}>Press to command me!</div> */}
+
                 </div>
               </div>
               }
@@ -277,9 +326,13 @@ const Dashboard = () => {
                   <span className={`font-bold text-xl tracking-wide`}>Voice Command</span>
                 </div>
                 <div className={`flex justify-center items-center`}>
-                  <button className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
+                  <button onClick={startListening} className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
                 </div>
-                <div className={`italic text-gray-600 flex items-center justify-center`}>Press to command me!</div>
+                {isListening && 
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>Tôi đang nghe đây...</div>
+                }
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>{text}</div>
+                {/* <div className={`italic text-gray-600 flex items-center justify-center`}>Press to command me!</div> */}
               </div>}
 
             </div>
@@ -345,21 +398,21 @@ const Dashboard = () => {
                   <SettingsIcon />
                 </button>
               </div>
-              <div className={`w-full h-auto flex flex-row justify-between`}>
+              <div className={`w-full h-full flex flex-row justify-between`}>
                 <div className={`w-[30%] flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md`} src={lvroom} alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/31e5c115209901.5628e3b91960f.gif" alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Living room</span>
                   </div>
                 </div>
                 <div className={`w-[30%] flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md`} src={kitchen} alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src="https://i.gifer.com/embedded/download/XxjV.gif" alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Kitchen</span>
                   </div>
                 </div>
                 <div className={`w-[30%] flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md`} src={outside} alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src="https://img1.picmix.com/output/pic/normal/5/8/8/0/9140885_639fa.gif" alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Main entrance</span>
                   </div>
@@ -367,6 +420,7 @@ const Dashboard = () => {
               </div>
             </div>
             {/* Door */}
+       
             <div className={`bg-[#F7F1FF] w-full md:w-1/3 rounded-3xl h-full px-4 py-4 flex flex-col gap-4`}>
               <div className={`flex flex-row justify-between h-full`}>
                   <div className={`flex flex-row gap-4 items-center`}>
