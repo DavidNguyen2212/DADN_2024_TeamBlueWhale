@@ -13,12 +13,13 @@ import useStore from "../../Zustand/store";
 
 
 export default function LivingRoom() {
-    const {stateAC, stateChandelier, setStateAC, setStateChandelier} = useStore((state) => ({
-        stateAC: state.stateAC, stateChandelier: state.stateChandelier,
-        setStateAC: state.setStateAC, setStateChandelier: setStateChandelier
-    }))
-
-
+    const {stateAC, stateChandelier, 
+        setStateAC, updateStateAC , setStateChandelier, updateStateChandelier} 
+        = useStore((state) => ({
+        stateAC: state.stateAC, stateChandelier: state.stateChandelier, 
+        setStateAC: state.setStateAC, updateStateAC: state.updateStateAC, 
+        setStateChandelier: state.setStateChandelier, updateStateChandelier: state.updateStateChandelier
+    }));
 
     const [firstLoad, setFirstLoad] = useState(true);
     const [allInfo, setAllInfo] = useState({});
@@ -39,26 +40,28 @@ export default function LivingRoom() {
         setTemperature(value.temp);
         setHumid(value.humidity);
         setLux(value.lux);
-        setOnAC(value.air_conditioner.state); setTempAC(value.air_conditioner.current_temp);
+        // setOnAC(value.air_conditioner.state); 
+        setStateAC(value.air_conditioner.state);
+        setTempAC(value.air_conditioner.current_temp);
         setChandelier(value.light.chandeliers);
         setLight1(value.light.light1); setLight2(value.light.light2)
         setFirstLoad(false);
         }
         fetchDataLivingroom();
 
-        // const intervalId = setInterval(fetchDataLivingroom, 10000);
+        // const intervalId = setInterval(fetchDataLivingroom, 1000);
 
         // // Cleanup function để xóa interval khi component unmount
         // return () => clearInterval(intervalId);
     }, []);
-
+    console.log("State Ac: ", stateAC)
     const updateAllInfo = (field) => {
         if (field === 'air_conditioner') {
             setAllInfo((prevData) => ({
                 ...prevData,
                 air_conditioner: {
                     ...prevData.air_conditioner,
-                    state: onAC,
+                    state: stateAC,
                     current_temp: tempAC
                 }
             }))
@@ -84,10 +87,10 @@ export default function LivingRoom() {
 
 
     // Air Conditioner 
-    const [onAC, setOnAC] = useState("on");     // sau này cần có thêm status
-    const toggleStateAC = () => {
-        setOnAC((curr) => (curr === "on" ? "off" : "on"));
-    }
+    // const [onAC, setOnAC] = useState("on");     // sau này cần có thêm status
+    // const toggleStateAC = () => {
+    //     setOnAC((curr) => (curr === "on" ? "off" : "on"));
+    // }
     const [colorMinus, setColorMinus] = useState("#E7D5FF");
     const [colorPlus, setColorPlus] = useState("#E7D5FF");
     const [tempAC, setTempAC] = useState(22)
@@ -141,7 +144,7 @@ export default function LivingRoom() {
         if (!firstLoad) {
             updateAllInfo('air_conditioner');
         }
-    }, [onAC, tempAC])
+    }, [stateAC, tempAC])
 
     useEffect(() => {
         if (!firstLoad) {
@@ -170,7 +173,7 @@ export default function LivingRoom() {
                     <div className="w-1/3 gap-2 md:gap-3">
                         <div className="flex flex-row justify-end gap-1 w-full">
                             {!isFold &&
-                            (onAC === "on" ? 
+                            (stateAC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Hoạt động{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -178,7 +181,7 @@ export default function LivingRoom() {
                             </p>)}
 
                             <button className="switch flex">
-                                <ReactSwitch onChange={toggleStateAC} checked={onAC === "on"}/>
+                                <ReactSwitch onChange={updateStateAC} checked={stateAC === "on"}/>
                             </button>
                         </div>
                     </div>
@@ -287,7 +290,7 @@ export default function LivingRoom() {
                     <div className={`w-full lg:mx-10 mt-8 h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl pt-3 pb-4 gap-4 lg:mt-4 lg:pb-0 lg:gap-8`}>
                         {/* Row 1 of Chandeliers */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {onAC === "on" ? 
+                            {stateAC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -312,7 +315,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8`}>
                         {/* Row 1 of Light 1 */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {onAC === "on" ? 
+                            {stateAC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -334,7 +337,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8 `}>
                         {/* Row 1 of light 2*/}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {onAC === "on" ? 
+                            {stateAC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">

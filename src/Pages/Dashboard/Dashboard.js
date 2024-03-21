@@ -21,13 +21,41 @@ import { UserData } from "../../Utils/Data";
 import Chart from "../../Components/Dashboard/Chart";
 import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
 import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
-
+import useStore from "../../Zustand/store";
+import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI";
 
 const Dashboard = () => {
+  const [allInfo, setAllInfo] = useState({});
+  const allInfoRef = useRef({});
+
+  const {stateAC, stateChandelier, 
+    setStateAC, updateStateAC , setStateChandelier, updateStateChandelier} 
+    = useStore((state) => ({
+    stateAC: state.stateAC, stateChandelier: state.stateChandelier, 
+    setStateAC: state.setStateAC, updateStateAC: state.updateStateAC, 
+    setStateChandelier: state.setStateChandelier, updateStateChandelier: state.updateStateChandelier
+  }));
+
+  const textToCommand = (your_text) => {
+    console.log("textTocommand: ", your_text)
+    if (your_text.includes("Bật") || your_text.includes("Bật"))
+    {
+      if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+          setStateAC("on");
+      }
+    }
+    else if (your_text.includes("Tắt") || your_text.includes("tắt"))
+    {
+      if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+          setStateAC("off");
+      }
+    }
+  }
+
   const {
-    text, startListening, stopListening, isListening, hasRecognitionSupport
+    text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
-  console.log("Nghe: ")
+  console.log("Nghe: ", text)
 
   const [firstLoad, setFirstLoad] = useState(true);
   const isMedium = useMediaQuery({maxWidth: 1024, minWidth: 769});
@@ -50,24 +78,69 @@ const Dashboard = () => {
     }
     fetchDoorState();
   }, [])
-  
-  // useEffect(() => {
 
-  //   // Cập nhật thời gian mỗi giây
-  //   const intervalID = setInterval(() => {
-  //     setDateTime(new Date());
-  //   }, 1000);
 
-  //   // Xóa interval khi component bị unmount
-  //   return () => clearInterval(intervalID);
-  // }, []);
+  const updateAllInfo = (field) => {
+    if (field === 'air_conditioner') {
+        setAllInfo((prevData) => ({
+            ...prevData,
+            air_conditioner: {
+                ...prevData.air_conditioner,
+                state: stateAC,
+                // current_temp: tempAC
+            }
+        }))
+    }
+    // else if (field === 'light') {
+    //     setAllInfo((prevData) => ({
+    //         ...prevData,
+    //             light: {
+    //             ...prevData.light,
+    //             chandeliers: chandelier,
+    //             light1: light1,
+    //             light2: light2
+    //         }
+    //     }))
+    // }
+  } 
+
+  useEffect(() => {
+    if (!firstLoad) {
+        updateAllInfo('air_conditioner');
+    }
+}, [stateAC])
+
+  useEffect(()=> {
+    const fetchDataLivingroom = async() => {
+      const response = await LivingroomGet() ;
+      // console.log("reponse from Living room api: ", response);
+      const value = JSON.parse(response?.data?.value);
+      setAllInfo(value);
+      allInfoRef.current = value;
+      setFirstLoad(false)
+    }
+    fetchDataLivingroom();
+  }, [])
+
+  const handleSubmit_Lvr = async () => {
+    const response = await LivingroomPost({"value": JSON.stringify(allInfo)});
+    console.log("reponse send to api: ", response);
+  }
 
 
   const handleSubmit = async () => {
     const response = await DoorPost({"value": openDoor});
     console.log("reponse send to api: ", response);
   }
-
+  useEffect(() => {
+    if (!firstLoad && allInfo) {
+        if (JSON.stringify(allInfo) !== JSON.stringify(allInfoRef.current)) {
+            // Nếu có sự thay đổi, gọi handleSubmit()
+            handleSubmit_Lvr();
+            allInfoRef.current = allInfo;
+        }
+    }
+  }, [allInfo])
 
   // Line chart
   const [element, setElement] = useState("Nhiệt độ");
@@ -123,7 +196,12 @@ const Dashboard = () => {
     }
   }, [openDoor])
 
-
+  useEffect(() => {
+    if (text != "" && !isListening) {
+      textToCommand(text)
+    }
+    // setText("")
+  }, [text])
   return (
     <div className="bg-white">
       <Header pageName={"Bảng điều khiển"}></Header>

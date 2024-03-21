@@ -1,13 +1,14 @@
 import axios from "axios";
 
+// Use prefix REACT_APP_ along with the env variable
 const SmartHomeAPI = axios.create({
-    baseURL: process.env.BASE_URL,
+    baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
     "Content-Type": "application/json",
-    "X-AIO-Key": process.env.HEADER_X_AIO_KEY
+    "X-AIO-Key": process.env.REACT_APP_HEADER_X_AIO_KEY
   },
 });
-
+console.log(process.env.HEADER_X_AIO_KEY)
 // SmartHomeAPI.interceptors.request.use(
 //     (config) => {
 //         const token = localStorage.getItem("accessToken");
