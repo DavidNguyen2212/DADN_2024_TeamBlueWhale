@@ -23,31 +23,70 @@ import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
 import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
 import useStore from "../../Zustand/store";
 import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI";
+import { PostASLvroom } from "../../API/LivingroomAPI/postASLvroom.js";
+import { useGetLivingroomQuery, usePostLivingroomMutation } from "../../API/APISlice/apiSlice.js";
+import WebSocketClient from 'websocket'
 
 const Dashboard = () => {
   const [allInfo, setAllInfo] = useState({});
   const allInfoRef = useRef({});
+  const {  data, error, isLoading, isFetching } = useGetLivingroomQuery({}, {
+    pollingInterval: 2000,
+    skipPollingIfUnfocused: false,
+  });
+  const [postLivingroom, response] = usePostLivingroomMutation()
 
-  const {stateAC, stateChandelier, 
-    setStateAC, updateStateAC , setStateChandelier, updateStateChandelier} 
-    = useStore((state) => ({
-    stateAC: state.stateAC, stateChandelier: state.stateChandelier, 
-    setStateAC: state.setStateAC, updateStateAC: state.updateStateAC, 
-    setStateChandelier: state.setStateChandelier, updateStateChandelier: state.updateStateChandelier
+  useEffect(() => {
+    console.log("From rtk query: ", data)
+  }, [data]);
+
+  const { value, setAutoMode, setAC, setTempAC, setChandeliers,setLight1, setLight2, toggleState } = useStore(
+    (state) => ({ value: state.value, setAutoMode: state.setAutoMode,
+    setAC: state.setAC, setTempAC: state.setTempAC,
+    setChandeliers: state.setChandeliers,
+    setLight1: state.setLight1, setLight2: state.setLight2, toggleState: state.toggleState
   }));
 
-  const textToCommand = (your_text) => {
+  useEffect(() => {
+    if (data) {
+      const gotValue = JSON.parse(data.value);
+      // setAllInfo(gotValue);
+      // allInfoRef.current = gotValue;
+      // setFirstLoad(false);
+
+      // States
+      setAutoMode(gotValue.autoMode);
+      // setTemperature(gotValue.temperature);   setHumid(gotValue.humidity);   setLux(gotValue.lux);
+      setAC(gotValue.AC);
+      setTempAC(gotValue.tempAC);
+      setChandeliers(gotValue.chandeliers);
+      setLight1(gotValue.light1);    
+      setLight2(gotValue.light2);
+      console.log("lingroom info: ", gotValue);
+    }
+  }, [data]);
+
+ 
+
+  const textToCommand = async (your_text) => {
     console.log("textTocommand: ", your_text)
     if (your_text.includes("Bật") || your_text.includes("Bật"))
     {
       if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
-          setStateAC("on");
+        setAC("on");
+        try {
+          await postLivingroom(JSON.stringify({"value": value})).unwrap();
+          console.log('Post created successfully');
+        } catch (error) {
+          console.error('Failed to create post:', error);
+        }
       }
     }
     else if (your_text.includes("Tắt") || your_text.includes("tắt"))
     {
       if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
-          setStateAC("off");
+        const response = await PostASLvroom(JSON.stringify({"state": "off"}))
+        // setAC("off");
       }
     }
   }
@@ -55,7 +94,7 @@ const Dashboard = () => {
   const {
     text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
-  console.log("Nghe: ", text)
+  // console.log("Nghe: ", text)
 
   const [firstLoad, setFirstLoad] = useState(true);
   const isMedium = useMediaQuery({maxWidth: 1024, minWidth: 769});
@@ -86,7 +125,7 @@ const Dashboard = () => {
             ...prevData,
             air_conditioner: {
                 ...prevData.air_conditioner,
-                state: stateAC,
+                state: value.AC,
                 // current_temp: tempAC
             }
         }))
@@ -108,7 +147,7 @@ const Dashboard = () => {
     if (!firstLoad) {
         updateAllInfo('air_conditioner');
     }
-}, [stateAC])
+}, [value.AC])
 
   useEffect(()=> {
     const fetchDataLivingroom = async() => {
@@ -422,9 +461,12 @@ const Dashboard = () => {
                   <span className={`font-bold text-xl tracking-wide`}>Voice Command</span>
                 </div>
                 <div className={`flex justify-center items-center`}>
-                  <button className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
+                  <button onClick={startListening} className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
                 </div>
-                <div className={`italic text-gray-600 flex items-center justify-center`}>Press to command me!</div>
+                {isListening && 
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>Tôi đang nghe đây...</div>
+                }
+                  <div className={`italic text-gray-600 flex items-center justify-center`}>{text}</div>
             </div>}
             
             {isMedium &&
@@ -479,20 +521,20 @@ const Dashboard = () => {
               <div className={`w-full h-full flex flex-row justify-between`}>
                 <div className={`w-[30%] flex flex-col gap-2`}>
                   <img className={`rounded-2xl shadow-md h-full`} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/31e5c115209901.5628e3b91960f.gif" alt={"Cam1"} />
-                  <div className={`flex flex-row gap-4 items-center`}>
-                    <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Living room</span>
+                  <div className={`flex flex-row gap-1 md:gap-4 items-center`}>
+                    <div className={`w-[5px] h-[5px] md:w-[10px] md:h-[10px] rounded-full bg-red-600`}></div><span className={`text-sm md:text-base`}>Living room</span>
                   </div>
                 </div>
                 <div className={`w-[30%] flex flex-col gap-2`}>
                   <img className={`rounded-2xl shadow-md h-full`} src="https://i.gifer.com/embedded/download/XxjV.gif" alt={"Cam1"} />
-                  <div className={`flex flex-row gap-4 items-center`}>
-                    <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Kitchen</span>
+                  <div className={`flex flex-row gap-1 md:gap-4 items-center`}>
+                    <div className={`w-[5px] h-[5px] md:w-[10px] md:h-[10px] rounded-full bg-red-600`}></div><span className={`text-sm md:text-base`}>Kitchen</span>
                   </div>
                 </div>
                 <div className={`w-[30%] flex flex-col gap-2`}>
                   <img className={`rounded-2xl shadow-md h-full`} src="https://img1.picmix.com/output/pic/normal/5/8/8/0/9140885_639fa.gif" alt={"Cam1"} />
-                  <div className={`flex flex-row gap-4 items-center`}>
-                    <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Main entrance</span>
+                  <div className={`flex flex-row gap-1 md:gap-4 items-center`}>
+                    <div className={`w-[5px] h-[5px] md:w-[10px] md:h-[10px] rounded-full bg-red-600`}></div><span className={`text-sm md:text-base`}>Main entrance</span>
                   </div>
                 </div>
               </div>

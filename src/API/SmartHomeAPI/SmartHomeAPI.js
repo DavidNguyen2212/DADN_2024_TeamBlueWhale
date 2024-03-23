@@ -8,7 +8,7 @@ const SmartHomeAPI = axios.create({
     "X-AIO-Key": process.env.REACT_APP_HEADER_X_AIO_KEY
   },
 });
-console.log(process.env.HEADER_X_AIO_KEY)
+
 // SmartHomeAPI.interceptors.request.use(
 //     (config) => {
 //         const token = localStorage.getItem("accessToken");

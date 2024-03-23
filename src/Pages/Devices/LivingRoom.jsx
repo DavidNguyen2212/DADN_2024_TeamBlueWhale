@@ -2,105 +2,106 @@ import { useEffect, useState, useRef } from "react";
 import GasIcon from "../../Assets/images/gas.svg"
 import GasIconSmall from "../../Assets/images/gasSmall.svg"
 import { useMediaQuery } from "react-responsive";
-import 
-{ HumidIcon, TemperatureIcon, AirConditionerIcon, FridgeIcon, LightIcon,
+import { HumidIcon, TemperatureIcon, AirConditionerIcon, FridgeIcon, LightIcon,
 TemperatureIconSmall, HumidIconSmall} from "../../Assets/icons/Icon";
 import ReactSwitch from "react-switch";
 import { Minus, Plus } from "lucide-react";
 import styles from "./LivingRoom.module.css"
 import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI";
 import useStore from "../../Zustand/store";
+import { useGetLivingroomQuery, usePostLivingroomMutation } from "../../API/APISlice/apiSlice";
+import { current } from "immer";
 
 
 export default function LivingRoom() {
-    const {stateAC, stateChandelier, 
-        setStateAC, updateStateAC , setStateChandelier, updateStateChandelier} 
-        = useStore((state) => ({
-        stateAC: state.stateAC, stateChandelier: state.stateChandelier, 
-        setStateAC: state.setStateAC, updateStateAC: state.updateStateAC, 
-        setStateChandelier: state.setStateChandelier, updateStateChandelier: state.updateStateChandelier
+    // Real-time (fake) fetch data
+    const {  data, error, isLoading, isFetching } = useGetLivingroomQuery({}, {
+        pollingInterval: 2000,
+        skipPollingIfUnfocused: false,
+      });
+    console.log("data: ", data)
+    // Submit new data
+    const [addNewState, response] = usePostLivingroomMutation()
+
+    const { value, setTemperature, setHumidity, setLux, setAutoMode, setAC, setTempAC, setChandeliers,setLight1, setLight2, setUpdated_at } = useStore(
+        (state) => ({ value: state.value, setTemperature: state.setTemperature,
+        setHumidity: state.setHumidity, setLux: state.setLux,
+        setAutoMode: state.setAutoMode,
+        setAC: state.setAC, setTempAC: state.setTempAC,
+        setChandeliers: state.setChandeliers,
+        setLight1: state.setLight1, setLight2: state.setLight2, setUpdated_at: state.setUpdated_at
     }));
 
-    const [firstLoad, setFirstLoad] = useState(true);
-    const [allInfo, setAllInfo] = useState({});
-    const allInfoRef = useRef({});
-    const [temperature, setTemperature] = useState(24);
-    const [humid, setHumid] = useState(30);
-    const [lux, setLux] = useState(600);
+    // Manage sending data
+    const [firstLoad, setFirstLoad] = useState(true);   
+    const [allInfo, setAllInfo] = useState({});         
+    const allInfoRef = useRef({});      
 
-    useEffect (() => {
-        const fetchDataLivingroom = async() => {
-        const response = await LivingroomGet();
-        // console.log("reponse from Living room api: ", response);
-        const value = JSON.parse(response?.data?.value);
-        setAllInfo(value);
-        allInfoRef.current = value;
-
-        // Set automode
-        setTemperature(value.temp);
-        setHumid(value.humidity);
-        setLux(value.lux);
-        // setOnAC(value.air_conditioner.state); 
-        setStateAC(value.air_conditioner.state);
-        setTempAC(value.air_conditioner.current_temp);
-        setChandelier(value.light.chandeliers);
-        setLight1(value.light.light1); setLight2(value.light.light2)
-        setFirstLoad(false);
+    useEffect(() => {
+        if (data) {
+          const got_value = JSON.parse(data.value);
+          // setAllInfo(value);
+          allInfoRef.current = got_value;
+          setFirstLoad(false);
+          // States
+          setAutoMode(got_value.autoMode);
+          setTemperature(got_value.temperature);   setHumidity(got_value.humidity);   setLux(got_value.lux);
+          setAC(got_value.AC);
+          setTempAC(got_value.tempAC);
+          setChandeliers(got_value.chandeliers);
+          setLight1(got_value.light1);    
+          setLight2(got_value.light2);
         }
-        fetchDataLivingroom();
+      }, []);
 
-        // const intervalId = setInterval(fetchDataLivingroom, 1000);
-
-        // // Cleanup function để xóa interval khi component unmount
-        // return () => clearInterval(intervalId);
-    }, []);
-    console.log("State Ac: ", stateAC)
-    const updateAllInfo = (field) => {
-        if (field === 'air_conditioner') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                air_conditioner: {
-                    ...prevData.air_conditioner,
-                    state: stateAC,
-                    current_temp: tempAC
-                }
-            }))
-        }
-        else if (field === 'light') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                    light: {
-                    ...prevData.light,
-                    chandeliers: chandelier,
-                    light1: light1,
-                    light2: light2
-                }
-            }))
-        }
-    } 
+    // const updateAllInfo = (field) => {
+    //     if (field === 'autoMode') {
+    //         setAllInfo((prevData) => ({
+    //             ...prevData,
+    //             autoMode: autoMode
+    //         }))
+    //     }
+    //     else if (field === 'air_conditioner') {
+    //         setAllInfo((prevData) => ({
+    //             ...prevData,
+    //             air_conditioner: {
+    //                 ...prevData.air_conditioner,
+    //                 state: AC,
+    //                 current_temp: tempAC,
+    //             }
+    //         }))
+    //     }
+    //     else if (field === 'light') {
+    //         setAllInfo((prevData) => ({
+    //             ...prevData,
+    //                 light: {
+    //                 ...prevData.light,
+    //                 chandeliers: chandeliers,
+    //                 light1: light1,
+    //                 light2: light2
+    //             }
+    //         }))
+    //     }
+    // } 
 
     const handleSubmit = async () => {
-        const response = await LivingroomPost({"value": JSON.stringify(allInfo)});
-        console.log("reponse send to api: ", response);
+       await addNewState({"value": JSON.stringify(value)}).unwrap()
+      .then(() => {})
+      .then((error) => {
+        console.log(error)
+      })
     }
 
-
-
-    // Air Conditioner 
-    // const [onAC, setOnAC] = useState("on");     // sau này cần có thêm status
-    // const toggleStateAC = () => {
-    //     setOnAC((curr) => (curr === "on" ? "off" : "on"));
-    // }
     const [colorMinus, setColorMinus] = useState("#E7D5FF");
     const [colorPlus, setColorPlus] = useState("#E7D5FF");
-    const [tempAC, setTempAC] = useState(22)
+
     // use for Responsive
     const isFold = useMediaQuery({maxWidth : 290 })
     const isMobile = useMediaQuery({ maxWidth: 768 });
     const isUnderLarge = useMediaQuery({ maxWidth: 1023 })
     const [dashArray, setDashArray] = useState(isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2);
     // const [dashOffset, setDashOffset] = useState(dashArray);
-    const [dashOffset, setDashOffset] = useState(dashArray - dashArray * (tempAC/ 40));
+    const [dashOffset, setDashOffset] = useState(dashArray - dashArray * (value.tempAC/ 40));
     
     useEffect(() => {
         setDashArray(isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2)
@@ -113,8 +114,8 @@ export default function LivingRoom() {
         setTimeout(() => {
           setColorMinus("#E7D5FF");
         }, 100);
-        setTempAC((curr) => curr === 0 ? 0 : (curr - 1));
-        setDashOffset(curr => tempAC === 0? curr : (dashArray - dashArray * (tempAC - 1) / 40))
+        setTempAC(value.tempAC === 0 ? 0 : (value.tempAC - 1));
+        setDashOffset(value.tempAC === 0? value.tempAC : (dashArray - dashArray * (value.tempAC - 1) / 40))
     };
     const handleClickUp = () => {
         // Thay đổi màu nền khi nhấp vào
@@ -123,44 +124,33 @@ export default function LivingRoom() {
         setTimeout(() => {
           setColorPlus("#E7D5FF");
         }, 100);
-        setTempAC((curr) => curr === 30 ? 30 : (curr + 1));
-        setDashOffset(curr => tempAC === 30? curr : (dashArray - dashArray * (tempAC + 1) / 40))
+        setTempAC(value.tempAC === 30 ? 30 : (value.tempAC + 1));
+        setDashOffset(value.tempAC === 30? value.tempAC : (dashArray - dashArray * (value.tempAC + 1) / 40))
       };
 
-    const [chandelier, setChandelier] = useState("on")
-    const toggleState0 = () => {
-        setChandelier((curr) => (curr === "on" ? "off" : "on"));
-    }
-    const [light1, setLight1] = useState("on");   
-    const toggleState1 = () => {
-        setLight1((curr) => (curr === "on" ? "off" : "on"));
-    }
-    const [light2, setLight2] = useState("on");    
-    const toggleState2 = () => {
-        setLight2((curr) => (curr === "on" ? "off" : "on"));
-    }
 
     useEffect(() => {
         if (!firstLoad) {
-            updateAllInfo('air_conditioner');
+            const current_time = new Date()
+            setUpdated_at(current_time.toISOString())
         }
-    }, [stateAC, tempAC])
+    }, [value])
+
+    // useEffect(() => {
+    //     if (!firstLoad) {
+    //         updateAllInfo('light');
+    //     }
+    // }, [chandeliers, light1, light2])
 
     useEffect(() => {
-        if (!firstLoad) {
-            updateAllInfo('light');
-        }
-    }, [chandelier, light1, light2])
-
-    useEffect(() => {
-        if (!firstLoad && allInfo) {
-            if (JSON.stringify(allInfo) !== JSON.stringify(allInfoRef.current)) {
+        if (!firstLoad && value) {
+            if (JSON.stringify(value) !== JSON.stringify(allInfoRef.current)) {
                 // Nếu có sự thay đổi, gọi handleSubmit()
                 handleSubmit();
                 allInfoRef.current = allInfo;
             }
         }
-    }, [allInfo])
+    }, [value])
 
     return (
     <div className={`w-full flex flex-col-reverse lg:flex-row gap-4 lg:gap-2 mt-4 mb-4 `}>
@@ -173,7 +163,7 @@ export default function LivingRoom() {
                     <div className="w-1/3 gap-2 md:gap-3">
                         <div className="flex flex-row justify-end gap-1 w-full">
                             {!isFold &&
-                            (stateAC === "on" ? 
+                            (value.AC === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Hoạt động{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -181,7 +171,7 @@ export default function LivingRoom() {
                             </p>)}
 
                             <button className="switch flex">
-                                <ReactSwitch onChange={updateStateAC} checked={stateAC === "on"}/>
+                                <ReactSwitch onChange={setAC(value.AC === "on"? "off" : "on")} checked={value.AC === "on"}/>
                             </button>
                         </div>
                     </div>
@@ -199,7 +189,7 @@ export default function LivingRoom() {
                             <div className={`${styles.inner} w-[150px] h-[150px] lg:w-[273px] lg:h-[273px] rounded-full flex items-center justify-center shadow-2xl z-50 bg-[#EFEFEF]`}>
                                 <div className={`${styles.inner} flex flex-col items-center font-semibold text-black gap-`}>
                                     <span className={`text-[#858585] text-base lg:text-2xl`}>Current</span>
-                                    <span className={`text-3xl lg:text-5xl font-extrabold`}>{tempAC >= 0 ? `+ ${tempAC}`:`- ${tempAC}`} {'\u00b0'}C</span>
+                                    <span className={`text-3xl lg:text-5xl font-extrabold`}>{value.tempAC >= 0 ? `+ ${value.tempAC}`:`- ${value.tempAC}`} {'\u00b0'}C</span>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +280,7 @@ export default function LivingRoom() {
                     <div className={`w-full lg:mx-10 mt-8 h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl pt-3 pb-4 gap-4 lg:mt-4 lg:pb-0 lg:gap-8`}>
                         {/* Row 1 of Chandeliers */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {stateAC === "on" ? 
+                            {value.chandeliers === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -298,7 +288,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={toggleState0} checked={chandelier === "on"}/>
+                                <ReactSwitch onChange={setChandeliers(value.chandeliers === "on"? "on" : "off")} checked={value.chandeliers === "on"}/>
                             </div>
                         </div>
                         {/* Row 2 of Chandeliers */}
@@ -315,7 +305,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8`}>
                         {/* Row 1 of Light 1 */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {stateAC === "on" ? 
+                            {value.light1 === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -323,7 +313,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={toggleState1} checked={light1 === "on"}/>
+                                <ReactSwitch onChange={setLight1(value.light1 === "on" ? "off" : "on")} checked={value.light1 === "on"}/>
                             </div>
                         </div>
                         {/* Row 2 of Light 1 */}
@@ -337,7 +327,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8 `}>
                         {/* Row 1 of light 2*/}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {stateAC === "on" ? 
+                            {value.light2 === "on" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -345,7 +335,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={toggleState2} checked={light2 === "on"}/>
+                                <ReactSwitch onChange={setLight1(value.light2 === "on" ? "off" : "on")} checked={value.light2 === "on"}/>
                             </div>
                         </div>
                         {/* Row 2 of light 2 */}
@@ -365,7 +355,7 @@ export default function LivingRoom() {
             <div className={`w-full h-auto lg:w-[260px] pt-2 rounded-3xl flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium`}>Temperature</div>
                 {firstLoad ? <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>...Loading</div>:
-                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{temperature > 0 ? `+ ${temperature}`:`- ${temperature}`} {'\u00b0'}C</div>}
+                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.temperature > 0 ? `+ ${value.temperature}`:`- ${value.temperature}`} {'\u00b0'}C</div>}
                 {/* Hiển thị TemperatureIconSmall cho màn hình nhỏ hơn hoặc bằng md */}
                 {isMobile && <TemperatureIconSmall />}
                 {/* Hiển thị TemperatureIcon cho màn hình lớn hơn md */}
@@ -373,13 +363,13 @@ export default function LivingRoom() {
             </div>
             <div className={`w-full h-auto lg:w-[260px] lg:h-[312px] pt-2 mb-1.5 rounded-tl-3xl rounded-tr-3xl rounded-bl-[100px] rounded-br-[100px] flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium lg:mb-2`}>Humidity</div>
-                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{humid} %</div>
+                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.humidity} %</div>
                 {isMobile && <HumidIconSmall />}
                 {!isMobile && <HumidIcon />} 
             </div>
             <div className={`w-full h-auto lg:w-[260px] lg:h-[330px] pt-2 rounded-3xl flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium mb-0`}>Lux</div>
-                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{lux} Lux</div> 
+                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.lux} Lux</div> 
                 {isMobile && <img src={GasIconSmall} alt="GasIconSmall" />}
                 {!isMobile && <img src={GasIcon} alt="GasIcon" />} 
             </div>
@@ -390,7 +380,7 @@ export default function LivingRoom() {
             <div className={`w-full flex flex-row gap-3 justify-between`}>
                 <div className={`w-full h-auto lg:w-[260px] pt-2 rounded-3xl flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                     <div className={`font-medium`}>Temperature</div>
-                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{temperature > 0 ? `+ ${temperature}`:`- ${temperature}`} {'\u00b0'}C</div>
+                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.temperature > 0 ? `+ ${value.temperature}`:`- ${value.temperature}`} {'\u00b0'}C</div>
                     {/* Hiển thị TemperatureIconSmall cho màn hình nhỏ hơn hoặc bằng md */}
                     {isMobile && <TemperatureIconSmall />}
                     {/* Hiển thị TemperatureIcon cho màn hình lớn hơn md */}
@@ -398,7 +388,7 @@ export default function LivingRoom() {
                 </div>
                 <div className={`w-full h-auto pt-2 mb-1. rounded-tl-3xl rounded-tr-3xl rounded-bl-[100px] rounded-br-[100px] flex flex-col justify items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                     <div className={`font-medium lg:mb-2`}>Humidity</div>
-                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{humid} %</div>
+                    <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.humidity} %</div>
                     {isMobile && <HumidIconSmall />}
                     {!isMobile && <HumidIcon />} 
                 </div>
@@ -406,7 +396,7 @@ export default function LivingRoom() {
             
             <div className={`w-full h-auto lg:w-[260px] lg:h-[330px] pt-2 rounded-3xl flex flex-col justify-between items-center gap-2 lg:gap-4 bg-[#F7F1FF]`}>
                 <div className={`font-medium mb-0`}>Lux</div>
-                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{lux} Lux</div> 
+                <div className={`text-[#555555] text-2xl lg:text-4xl font-extrabold`}>{value.lux} Lux</div> 
                 {isMobile && <img src={GasIconSmall} alt="GasIconSmall" />}
                 {!isMobile && <img src={GasIcon} alt="GasIcon" />} 
             </div>
