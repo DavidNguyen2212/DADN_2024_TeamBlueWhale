@@ -36,7 +36,7 @@ const useSpeechReg = () => {
     }
 
     return {
-        text, isListening, startListening, stopListening, hasRecognitionSupport: !!recognition,
+        text, setText, isListening, startListening, stopListening, hasRecognitionSupport: !!recognition,
     }
 };
 

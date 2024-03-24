@@ -21,13 +21,157 @@ import { UserData } from "../../Utils/Data";
 import Chart from "../../Components/Dashboard/Chart";
 import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
 import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
+import { useGetLivingroomQuery, useGetTemperatureQuery } from "../../API/RTK_Query/apiSlice.jsx";
+import useStore from "../../Zustand/store.js";
+import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI.js";
 
-
+// try {
+        //   await postLivingroom(JSON.stringify({"value": value})).unwrap();
+        //   console.log('Post created successfully');
+        // } catch (error) {
+        //   console.error('Failed to create post:', error);
+        // }
 const Dashboard = () => {
+  const toISOStringNow = () => {
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1) + "+07:00";
+    return localISOTime;
+  }
   const {
-    text, startListening, stopListening, isListening, hasRecognitionSupport
+    text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
-  console.log("Nghe: ")
+
+  const {commandAssistant, setNew} = useStore((state) => ({
+    commandAssistant: state.commandAssistant,
+    setNew: state.setNew
+  }))
+  // console.log("Nghe: ")
+  // const textToCommand = async (your_text) => {
+  //   console.log("textTocommand: ", your_text)
+  //   if (your_text.includes("Bật") || your_text.includes("bật"))
+  //   {
+  //     if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.AC = "on";
+  //       const number = your_text.match(/\d+/g);
+  //       if (number) {
+  //         obj.tempAC = number[0];
+  //       }
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn chùm")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.chandeliers = "on";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn 1")|| your_text.includes("đèn một")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.light1 = "on";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn 2")|| your_text.includes("đèn hai")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.light2 = "on";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //   }
+  //   else if (your_text.includes("Tắt") || your_text.includes("tắt"))
+  //   {
+  //     if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.AC = "off";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn chùm")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.chandeliers = "off";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn 1")|| your_text.includes("đèn một")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.light1 = "off";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //     else if (your_text.includes("đèn 2")|| your_text.includes("đèn hai")) {
+  //       const response = await LivingroomGet();
+  //       let obj = JSON.parse(response?.data?.value);
+  //       obj.light2 = "off";
+  //       obj.created_at = toISOStringNow();
+  //       const sender = await LivingroomPost({value: JSON.stringify(obj)});
+  //       console.log("Info send to Livingroom: ", sender);
+  //     }
+  //   }
+  //   setText("");
+  // }
+
+  const textToCommand = async (your_text) => {
+    console.log("textTocommand: ", your_text)
+    const response = await LivingroomGet();
+    let obj = JSON.parse(response?.data?.value);
+  
+    const setDeviceState = async (device, state) => {
+        obj[device] = state;
+        obj.created_at = toISOStringNow();
+        const sender = await LivingroomPost({value: JSON.stringify(obj)});
+        console.log("Info send to Livingroom: ", sender);
+    };
+  
+    if (your_text.includes("Bật") || your_text.includes("bật")) {
+        if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+            const number = your_text.match(/\d+/g);
+            const temperature = number ? number[0] : null;
+            if (temperature) obj.tempAC = temperature;
+            await setDeviceState("AC", "on");
+        }
+        else if (your_text.includes("đèn chùm")) {
+            await setDeviceState("chandeliers", "on");
+        }
+        else if (your_text.includes("đèn 1") || your_text.includes("đèn một")) {
+            await setDeviceState("light1", "on");
+        }
+        else if (your_text.includes("đèn 2") || your_text.includes("đèn hai")) {
+            await setDeviceState("light2", "on");
+        }
+    }
+    else if (your_text.includes("Tắt") || your_text.includes("tắt")) {
+        if (your_text.includes("điều hòa") || your_text.includes("máy lạnh")) {
+            await setDeviceState("AC", "off");
+        }
+        else if (your_text.includes("đèn chùm")) {
+            await setDeviceState("chandeliers", "off");
+        }
+        else if (your_text.includes("đèn 1") || your_text.includes("đèn một")) {
+            await setDeviceState("light1", "off");
+        }
+        else if (your_text.includes("đèn 2") || your_text.includes("đèn hai")) {
+            await setDeviceState("light2", "off");
+        }
+    }
+    setNew('commandAssistant', true);
+    setText("");
+  };
+
 
   const [firstLoad, setFirstLoad] = useState(true);
   const isMedium = useMediaQuery({maxWidth: 1024, minWidth: 769});
@@ -36,7 +180,15 @@ const Dashboard = () => {
   const [dateTime, setDateTime] = useState(new Date());
   const [doorInfo, setDoorInfo] = useState("");
   const doorInfoRef = useRef("");
+
+
+  useEffect(() => {
+    if (text != "" && !isListening) {
+      textToCommand(text)
+    }
   
+  }, [text])
+
   useEffect(() => {
     const fetchDoorState = async() => {
       const response = await DoorGet();
@@ -280,9 +432,9 @@ const Dashboard = () => {
                     ))}
                     </select>
                   </div>
-                  {element === "Nhiệt độ" && <Chart chartData={userData[0]} />}
-                  {element === "Độ ẩm" && <Chart chartData={userData[1]} />}
-                  {element === "Ánh sáng" && <Chart chartData={userData[2]} />}
+                  {element === "Nhiệt độ" && <Chart chartData={"Nhiệt độ"} />}
+                  {element === "Độ ẩm" && <Chart chartData={"Độ ẩm"} />}
+                  {element === "Ánh sáng" && <Chart chartData={"Ánh sáng"} />}
               </div>
 
               {/* Shorcuts */}

@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const SmartHomeAPI = axios.create({
-    baseURL: process.env.BASE_URL,
+    baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
     "Content-Type": "application/json",
-    "X-AIO-Key": process.env.HEADER_X_AIO_KEY
+    "X-AIO-Key": process.env.REACT_APP_HEADER_X_AIO_KEY
   },
 });
 
