@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InfoField from "../../Utils/InfoField";
 import {X} from 'lucide-react'
-
+import { useSocket } from "../../Contexts/SocketIOContext";
 
 function UserInfoModal({children}) {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const UserSocket = useSocket()
 
     const handleLogout = () => {
-        navigate("/");
+      UserSocket?.socket?.disconnect();
+      navigate("/");
     }
 
     return (

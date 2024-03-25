@@ -11,6 +11,7 @@ import {
   faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 
+
 const Home = () => {
     return (
       <div className="">

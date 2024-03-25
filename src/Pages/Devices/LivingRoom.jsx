@@ -103,7 +103,7 @@ export default function LivingRoom() {
 
     const updateAllInfo = (field) => {
         const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-        const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+        const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1) + "+07:00";
         if (field === 'autoMode') {
             setAllInfo((prevData) => ({
                 ...prevData,

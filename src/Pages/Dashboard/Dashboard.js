@@ -132,7 +132,7 @@ const Dashboard = () => {
   
     const setDeviceState = async (device, state) => {
         obj[device] = state;
-        obj.created_at = toISOStringNow();
+        obj.updated_at = toISOStringNow();
         const sender = await LivingroomPost({value: JSON.stringify(obj)});
         console.log("Info send to Livingroom: ", sender);
     };

@@ -6,12 +6,68 @@ import Warning from "../../Components/Messages/Warning";
 import Notify from "../../Components/Messages/Notify";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BsCalendar } from "react-icons/bs";
 import { format } from "date-fns";
 import vi from "date-fns/locale/vi";
+import { GetNotificationsByDay } from "../../API/NotificationAPI/NotificationAPI";
+import MyLoader from "../../Components/Messages/Loader";
+import { useNewNotice } from "../../Contexts/NoticeContext";
+import { confirmCheckNotice, getNotice } from "../../API/MessageAPI/MessageAPI";
+import { useSocket } from "../../Contexts/SocketIOContext";
 
 const Message = () => {
+  const [data, setData] = useState({});
+  const NewNoticeContext = useNewNotice();
+  const UserSocket = useSocket();
+  const [firstLoad, setFirstLoad] = useState(true);
+  const [allNotifs, setAllNotifs] = useState();
+  const allNotifsRef = useRef([]);
+  // useEffect(() => {
+  //   handleGetNotice({})
+  // }, []);
+
+  // const handleGetNotice = async (params) => { 
+  //   const response = await getNotice(params);
+  //   setData(response?.data?.data.allNotices);
+  //   NewNoticeContext?.updateNewNotice(response?.data?.data.news);
+  // };
+
+  // const fetchNotify = async (params) => {
+  //   await handleGetNotice(params)
+  // };
+
+  UserSocket?.socket?.on("update-notification-list", () => {
+    try {
+      console.log("Signal Update-Notification-List");
+      // fetchNotify({});
+    } catch (error) {
+      console.log("Error Update-Notification-List");
+    }
+  })
+    
+  //Just one ? in the UserSocket
+  useEffect(() => {
+    UserSocket?.socket.on('Announce change', (data) => {
+      console.log("Change in notifs: ", data);
+      UserSocket.socket.emit('message', "I received!");
+      setData(data)})
+  }, [])
+  console.log("CC")
+
+  
+
+  // const handleConfirmNotice = async () => {
+  //   try {
+  //     setData({});
+  //     await confirmCheckNotice();
+  //     await handleGetNotice();
+  //   } catch (err) {
+  //     console.log("Error handle confirm check notice");
+  //   }
+  // };
+
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -19,6 +75,16 @@ const Message = () => {
     setSelectedDate(date);
     setShowCalendar(false);
   };
+  useEffect(() => {
+    const fetchNotifs = async (query_day) => {
+      const response = await GetNotificationsByDay(query_day);
+      console.log("Notifs data: ", response);
+      setAllNotifs(response?.data);
+      allNotifsRef.current = response?.data;
+    } 
+    // setAllNotifs([]);
+    fetchNotifs(format(selectedDate, "yyyy-MM-dd", { locale: vi }));
+  }, [selectedDate])
 
   return (
       <div className={`bg-white h-full`}>
@@ -40,10 +106,34 @@ const Message = () => {
             </div>
           </div>
 
-          <Change device={"điều hòa"} room={"phòng khách"}/>
+          {/* <Change device={"điều hòa"} room={"phòng khách"}/>
           <Notify />
           <Warning />
-          <Accident room={"phòng ăn"} />
+          <Accident room={"phòng ăn"} /> */}
+          {Array.isArray(allNotifs) ? (
+            allNotifs.length > 0 ? (
+              allNotifs.map((notif, index) => {
+                switch (notif.type) {
+                  case "Tai nạn xảy ra":
+                    return <Accident room={notif.place} time={new Date(notif.created_at)} />;
+                  case "Nhắc nhở":
+                    return <Notify time={new Date(notif.created_at)} />;
+                  case "Thay đổi thành công":
+                    return <Change device={notif.device} room={notif.place} time={new Date(notif.created_at)} />;
+                  default:
+                    return <Warning time={new Date(notif.created_at)}/>;
+                }
+              })
+            ) : (
+              <h2> Không có thông báo nào </h2>
+            )
+          ) : (
+            <>
+              <MyLoader />
+              <MyLoader />
+              <MyLoader />
+            </>
+          )}
         </div>
         
       </div>
