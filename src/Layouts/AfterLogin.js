@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect, createContext } from "react";
 import FullSidebar from "../Components/Sidebar/FullSidebar";
-import styles from "./AfterLogin.module.css"
+import styles from "./AfterLogin.module.css";
+import { useGetTemperatureQuery } from "../API/RTK_Query/apiSlice";
 
 export const OpenSidebarContext = createContext()
 const AfterLogin = ({children, role}) => {
-    // const elementRef = useRef();
+    // const elementRef = useRef(); 
+
+
+    // console.log(temperature)
+
     const [showSideBar, setShowSideBar] = useState(true);
     const [paddingLeft, setPaddingLeft] = useState("pl-[66px]");
 

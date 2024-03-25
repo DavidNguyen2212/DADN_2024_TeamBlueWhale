@@ -36,4 +36,3 @@ const Warning = (props) => {
 }
 
 export default Warning;
-

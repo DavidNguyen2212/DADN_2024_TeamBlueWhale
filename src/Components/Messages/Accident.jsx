@@ -5,7 +5,7 @@ import { X } from 'lucide-react'
 import { useMediaQuery } from "react-responsive";
 
 const Accident = (props) => {
-    const [currentTime, setCurrentTime] = useState(new Date()); 
+    const [currentTime, setCurrentTime] = useState(props.time); 
     const formattedTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const isSmall = useMediaQuery({ maxWidth: 640 });
 

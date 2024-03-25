@@ -3,14 +3,33 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../App';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { io } from 'socket.io-client';
+import { useSocket } from '../../Contexts/SocketIOContext';
+import { useNewNotice } from '../../Contexts/NoticeContext';
+import { getNotice } from '../../API/MessageAPI/MessageAPI';
 
 
 const Login = () => {
   const {role, setRole} = useContext(LoginContext);
+  const UserSocket = useSocket();
+  const NewNoticeContext = useNewNotice()
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setRole("family_member");
+    const socket = io("http://127.0.0.1:5000");
+    socket.on("connect", () => {
+      console.log("Init socket IO with socketID = ", socket?.id);
+    });
+    
+    UserSocket?.connectSocket(socket);
+    // socket?.emit('message', "data here");
+    // socket?.on('response', () => {
+    //   console.log("response")
+    // })
+
+    // const responseNoticeSpso = await getNotice({});
+    // NewNoticeContext?.updateNewNotice(responseNoticeSpso?.data?.data.news);
     navigate("/Dashboard");
   }
 

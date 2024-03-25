@@ -4,8 +4,12 @@ import EmptyLayout from "./Layouts/EmptyLayout"
 import BeforeLogin from "./Layouts/BeforeLogin"
 import AfterLogin from "./Layouts/AfterLogin"
 import { createContext, useState } from "react"
+import { smartHomeAPI } from "./API/RTK_Query/apiSlice"
+import { ApiProvider } from "@reduxjs/toolkit/query/react"
+
 
 function renderRoutes(routes, role = "") {
+
   return routes?.map((route, index) => {
     let Layout;
     if (!route.layout) {
@@ -34,12 +38,16 @@ export const LoginContext = createContext()
 function App() {
   const [role, setRole] = useState("")
   return ( 
-    <LoginContext.Provider value={{role,setRole}}>
-      <Routes>
-        {renderRoutes(publicRoutes)}
-        {renderRoutes(privateRoutes, "family_member")}
-      </Routes>
-    </LoginContext.Provider>
+
+        <ApiProvider api={smartHomeAPI}>
+          <LoginContext.Provider value={{role,setRole}}>
+            <Routes>
+              {renderRoutes(publicRoutes)}
+              {renderRoutes(privateRoutes, "family_member")}
+            </Routes>
+          </LoginContext.Provider>
+        </ApiProvider>
+
   );
 }
 export default App;
