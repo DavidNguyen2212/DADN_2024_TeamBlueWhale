@@ -46,16 +46,6 @@ const Message = () => {
     }
   })
     
-  //Just one ? in the UserSocket
-  useEffect(() => {
-    UserSocket?.socket.on('Announce change', (data) => {
-      console.log("Change in notifs: ", data);
-      UserSocket.socket.emit('message', "I received!");
-      setData(data)})
-  }, [])
-  console.log("CC")
-
-  
 
   // const handleConfirmNotice = async () => {
   //   try {
@@ -75,16 +65,28 @@ const Message = () => {
     setSelectedDate(date);
     setShowCalendar(false);
   };
+
+  const fetchNotifs = async (query_day) => {
+    const response = await GetNotificationsByDay(query_day);
+    console.log("Notifs data: ", response);
+    setAllNotifs(response?.data);
+    allNotifsRef.current = response?.data;
+  } 
+
   useEffect(() => {
-    const fetchNotifs = async (query_day) => {
-      const response = await GetNotificationsByDay(query_day);
-      console.log("Notifs data: ", response);
-      setAllNotifs(response?.data);
-      allNotifsRef.current = response?.data;
-    } 
-    // setAllNotifs([]);
     fetchNotifs(format(selectedDate, "yyyy-MM-dd", { locale: vi }));
   }, [selectedDate])
+
+    //Just one ? in the UserSocket
+    useEffect(() => {
+      UserSocket?.socket.on('Announce change', (data) => {
+        let this_day = new Date()
+        setSelectedDate(this_day)
+        fetchNotifs(format(this_day, "yyyy-MM-dd", { locale: vi }));
+        UserSocket.socket.emit('message', "I received!");
+      })
+    }, [])
+    console.log("CC")
 
   return (
       <div className={`bg-white h-full`}>
