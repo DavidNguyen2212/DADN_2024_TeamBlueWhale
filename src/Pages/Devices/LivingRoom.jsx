@@ -40,7 +40,7 @@ export default function LivingRoom() {
             host: "io.adafruit.com",
             port: 443,
             username: process.env.REACT_APP_DAVID_NAME,
-            password: process.env.REACT_APP_DAVID_X_AIO_KEY});
+            password: process.env.REACT_APP_DAVID_KEY});
         // }
         
         return () => {

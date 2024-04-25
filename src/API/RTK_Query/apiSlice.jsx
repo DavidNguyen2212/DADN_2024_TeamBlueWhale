@@ -3,10 +3,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const smartHomeAPI = createApi({
   reducerPath: "smartHomeAPI",
   baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.REACT_APP_BASE_URL,
+    baseUrl: process.env.REACT_APP_QUI_URL,
     prepareHeaders: (headers, { getState }) => {
       // Thêm X-AIO-Key vào header
-      headers.set("X-AIO-Key", process.env.REACT_APP_HEADER_X_AIO_KEY);
+      headers.set("X-AIO-Key", process.env.REACT_APP_QUI_KEY);
       return headers;
     }
   }),
