@@ -1,6 +1,6 @@
 import SmartHomeAPI from "../SmartHomeAPI/SmartHomeAPI"
 
-const get_path = "/temperature/data/chart";
+const get_path = "/temp/data/chart";
 const queryString = "?start_time=2024-03-19T00:00:00Z"
 
 export const TempChartGet = async () => {

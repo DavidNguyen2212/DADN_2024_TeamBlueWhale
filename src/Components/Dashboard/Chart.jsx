@@ -5,8 +5,10 @@ import { useEffect, useState } from "react"
 import { TempChartGet } from "../../API/ChartAPI/TempAPI"
 import { HumidChartGet } from "../../API/ChartAPI/HumidAPI"
 import { LuxChartGet } from "../../API/ChartAPI/LuxAPI"
+import {useMediaQuery} from 'react-responsive'
 
 export default function Chart({chartData}) {
+    const isMobile = useMediaQuery({maxWidth: 430})
     const [datas, setDatas] = useState([]);
     let backgroundColor;
     if (chartData === "Nhiệt độ") {
@@ -16,7 +18,7 @@ export default function Chart({chartData}) {
         backgroundColor = "blue";
     }
     else {
-        backgroundColor = "yellow";
+        backgroundColor = "orange";
     }
     useEffect(() => {
         let response;
@@ -27,7 +29,6 @@ export default function Chart({chartData}) {
                 response = await HumidChartGet(); 
             else
                 response = await LuxChartGet(); 
-            // console.log("Chart data: ", response)
             const value = response?.data?.data;
             setDatas(value);
         }
@@ -36,10 +37,10 @@ export default function Chart({chartData}) {
     }, [])
 
     let drawData = {
-        labels: Array.from({ length: datas.length }, (_, index) => index + 1),
+        labels: Array.from({ length: isMobile ? 8 : 10 }, (_, index) => index + 1),
         datasets: [{
           label: chartData,
-          data: datas.map((data) => parseFloat(data[1])),
+          data: datas.map((data) => parseFloat(data[1])).slice(-(isMobile ? 8 : 10)),
           backgroundColor: backgroundColor,
           borderColor: backgroundColor,
           borderWidth: 1,
@@ -47,6 +48,8 @@ export default function Chart({chartData}) {
         }]};
 
         const options = {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
@@ -54,11 +57,17 @@ export default function Chart({chartData}) {
                         text: 'Các lần đo gần nhất'
                     }
                 },
+                y: {
+                    ticks: {
+                        stepSize: 0.5, // Đặt kích thước bước
+                        beginAtZero: false // Bắt đầu từ 0 hoặc giá trị nhỏ nhất
+                    }
+                }
             }
         };
     
     return (
-        <motion.div
+        <motion.div className={`relative h-full w-full`}
         initial={{ opacity: 0, y: -50 }} // Thuộc tính khởi tạo
         animate={{ opacity: 1, y: 0 }} // Thuộc tính animate
         transition={{ duration: 1 }} // Thời gian chuyển đổi

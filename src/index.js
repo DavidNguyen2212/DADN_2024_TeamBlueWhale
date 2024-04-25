@@ -6,16 +6,19 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { SocketProvider } from "./Contexts/SocketIOContext"
 import { NewNoticeProvider } from "./Contexts/NoticeContext"
+import { AuthProvider } from './Contexts/AuthProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-        <SocketProvider>
+    <SocketProvider>
       <NewNoticeProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-    </NewNoticeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AuthProvider>
+      </NewNoticeProvider>
     </SocketProvider>
   </React.StrictMode>
 );

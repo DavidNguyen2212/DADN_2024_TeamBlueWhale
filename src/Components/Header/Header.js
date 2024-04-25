@@ -48,10 +48,6 @@ const Header = ({pageName}) => {
                     
                 </UserInfoModal>
              
-                {/* {visibleButton && <button id="sidebarSwitch" type="button" onClick={() => setShowSideBar((curr) => !curr)}
-                    className={`${visibleButton? "px-2 bg-[#6A21A4] rounded" : "hidden"}`}>
-                    <FontAwesomeIcon size="1x" icon={faBars} color="#FFFFFF"/>
-                </button>}     */}
                 <button type="button" onClick={() => setShowSideBar((curr) => !curr)}
                     className={`${styles.sidebarSwitch}`}>
                     <FontAwesomeIcon size="1x" icon={faBars} color="#FFFFFF"/>

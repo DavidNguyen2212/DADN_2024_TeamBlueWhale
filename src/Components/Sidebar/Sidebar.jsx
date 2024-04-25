@@ -4,7 +4,9 @@ import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
 import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 import styles from "./Sidebar.module.css"
-
+import { useNewNotice } from "../../Contexts/NoticeContext";
+import { useSocket } from "../../Contexts/SocketIOContext";
+import { GetNumberNotifs } from "../../API/NotificationAPI/NotificationAPI";
 export const ExpandSidebarContext = createContext()
 
 export default function Sidebar({ children }) {
@@ -37,6 +39,12 @@ export default function Sidebar({ children }) {
 export function SidebarItem({func, icon, text, path, alert}) {
     const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
     const {expanded} = useContext(ExpandSidebarContext)
+    const NewNoticeContext = useNewNotice();
+    const UserSocket = useSocket();
+    UserSocket?.socket?.on('Announce change', async(data) => {
+        const new_notice = await GetNumberNotifs();
+        NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
+    })
 
     return (
     <NavLink onClick={() => setShowSideBar(false)} to={path}>
@@ -51,8 +59,10 @@ export function SidebarItem({func, icon, text, path, alert}) {
             ${expanded ? "w-52 ml-3" : "text-[12px] "}`}>
                 {text}
             </span>
-            {alert && (<div className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 
-                ${expanded ? "" : "top-2"}`} />)}
+            {/* {alert && (<div className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 
+                ${expanded ? "" : "top-2"}`} />)} */}
+            {alert && NewNoticeContext.newNotice !== 0 && (<div className={`absolute right-1 flex justify-center items-center text-white w-7 h-7 rounded-full bg-indigo-400 
+                ${expanded ? "" : "top-2"}`}>{NewNoticeContext.newNotice}</div>)}
             {!expanded && (<div className={`absolute left-full rounded-md px-2 py-1 ml-6
                 bg-indigo-100 text-indigo-800 text-sm invisible opacity-20
                 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100
