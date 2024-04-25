@@ -2,6 +2,13 @@
     border-radius: 12px;
     border: 2px solid #48C1B5;
 }
+._ChangeUnRead:hover {
+    opacity: 0.7;
+}
+._ChangeUnRead {
+    border-radius: 12px;
+    border: 3px solid #48BACA;
+}
 
 ._time_change {
     color: rgba(0, 0, 0, 0.4);
@@ -12,18 +19,35 @@
     border-radius: 12px;
     border: 2px solid #9DC0EE;
 }
+._NotifyUnRead:hover {
+    opacity: 0.7;
+}
+._NotifyUnRead {
+    border-radius: 12px;
+    border: 3px solid #4EA3E0;
+}
 
 ._Accident {
     border-radius: 12px;
     border: 2px solid #F4B0A1;
 }
+._AccidentUnRead:hover {
+    opacity: 0.7;
+}
+._AccidentUnRead {
+    border-radius: 12px;
+    border: 3px solid #CA5048;
+}
 
 ._Warning {
     border-radius: 12px;
     border: 2px solid #F7D9A4;
-    /* transition: transform 1s ease; */
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s linear;
 }
-.hidden {
-  transform: translateX(-1000px);
+._WarningUnRead:hover {
+    opacity: 0.7;
+}
+._WarningUnRead {
+    border-radius: 12px;
+    border: 3px solid #FFA318;
 }

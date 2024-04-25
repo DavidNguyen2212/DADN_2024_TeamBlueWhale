@@ -10,9 +10,9 @@ import { Minus, Plus } from "lucide-react";
 import styles from "./LivingRoom.module.css"
 import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI";
 import useStore from "../../Zustand/store";
-import { useGetLivingroomQuery, usePostLivingroomMutation } from "../../API/RTK_Query/apiSlice";
+import { useGetACQuery, useGetChandeliersQuery, useGetLivingroomQuery, useGetTempACQuery, usePostACMutation, usePostChandeliersMutation, usePostLivingroomMutation, usePostTempACMutation } from "../../API/RTK_Query/apiSlice";
 import { useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery } from "../../API/RTK_Query/apiSlice";
-
+import mqtt from "mqtt";
 
 export default function LivingRoom() {
     const {commandAssistant, autoMode, temperature, humidity, lux, AC, tempAC, chandeliers, 
@@ -23,139 +23,168 @@ export default function LivingRoom() {
         chandeliers: state.chandeliers, light1: state.light1, light2: state.light2, 
         setNew: state.setNew, setToggleState: state.setToggleState
     }))
+    
+    const effectRan = useRef(false)
+    const [client, setClient] = useState(null);
+    const [connectStatus, setConnectStatus] = useState();
+    const [payLoad, setPayLoad] = useState();
+    const mqttConnect = (host, mqttOption) => {
+        setConnectStatus('Connecting');
+        setClient(mqtt.connect(host, mqttOption));
+    };
 
-    // const [currentTemp, setCurrentTemp] = useState(temperature);
-    // useEffect(() => {
-    //     const unsubscribe = useStore.subscribe(
-    //       newTemperature => setCurrentTemperature(newTemperature.temperature),
-    //       state => state.temperature
-    //     );
+    useEffect(() => {
+        let isMounted = true;
+        // if (effectRan == false) {
+            mqttConnect("mqtt://io.adafruit.com", {
+            host: "io.adafruit.com",
+            port: 443,
+            username: process.env.REACT_APP_DAVID_NAME,
+            password: process.env.REACT_APP_DAVID_X_AIO_KEY});
+        // }
+        
+        return () => {
+            isMounted = false;
+            effectRan.current = true
+            if (client) {
+                console.log("Xóa client")
+                client.end();
+            }
+        };
+    }, [])
     
-    //     return () => {
-    //       unsubscribe();
-    //     };
-    //   }, []);
-    
+    useEffect(() => {
+        if (client && effectRan) {
+            client.on('connect', () => {
+                setConnectStatus('Connected');
+                console.log("Connected!")
+                client.subscribe("david_nguyen7603/feeds/temp")
+                client.subscribe("david_nguyen7603/feeds/light")
+                client.subscribe("david_nguyen7603/feeds/humi")
+            });
+            console.log(client);
+            client.on('error', (err) => {
+                console.error('Connection error: ', err);
+                client.end();
+            });
+            client.on('reconnect', () => {
+                setConnectStatus('Reconnecting');
+            });
+            client.on('message', (topic, message) => {
+                const payload = { topic, message: message.toString() };
+                console.log("Nhan du lieu", payload)
+                setPayLoad(payload);
+            });
+        }
+
+        return () => {
+            if (client) {
+                client.removeAllListeners();
+            }
+        };
+      }, [client]);
+
+
     const [firstLoad, setFirstLoad] = useState(true);
-    const [allInfo, setAllInfo] = useState();
-    const allInfoRef = useRef({});
+    // Responsive
     const isFold = useMediaQuery({maxWidth : 290 })
     const isMobile = useMediaQuery({ maxWidth: 768 });
     const isUnderLarge = useMediaQuery({ maxWidth: 1023 })
-
+    // Air conditioner UI
     const [dashArray, setDashArray] = useState(isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2);
-    useEffect(() => {
-        setDashArray(isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2)
-    }, [isUnderLarge])
-    // isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2
-    
-    const {  data, error, isLoading, isFetching } = useGetLivingroomQuery({}, {
-        pollingInterval: 5000,
-        skipPollingIfUnfocused: false,
-      });
+    const [dashOffset, setDashOffset] = useState(dashArray);
+    const [colorMinus, setColorMinus] = useState("#E7D5FF");
+    const [colorPlus, setColorPlus] = useState("#E7D5FF");
 
+    // API area
     const {data: env_temp} = useGetTemperatureQuery({}, {
-        pollingInterval: 30000,
-        skipPollingIfUnfocused: false,
+        // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
     const {data: env_humid} = useGetHumidityQuery({}, {
-        pollingInterval: 30000,
-        skipPollingIfUnfocused: false,
+        // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
     const {data: env_lux} = useGetLuxQuery({}, {
-        pollingInterval: 30000,
-        skipPollingIfUnfocused: false,
+        // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
-    
+    const {data: chans_val} = useGetChandeliersQuery({}, {
+        // pollingInterval: 3000, skipPollingIfUnfocused: false,
+    })
+    const {data: AC_state} = useGetACQuery({}, {
+        // pollingInterval: 3000, skipPollingIfUnfocused: false,
+    })
+    const {data: AC_val} = useGetTempACQuery({}, {
+        // pollingInterval: 3000, skipPollingIfUnfocused: false,
+    })
+    // const [postLivingroom, response] = usePostLivingroomMutation()
+    const [postAC, responseAC] = usePostACMutation()
+    const [postTempAC, responseTempAC] = usePostTempACMutation()
+    const [postChandeliers, responseChans] = usePostChandeliersMutation()
+    // console.log("CC")
+
+    useEffect(() => {
+        let newDashArray = isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2;
+        setDashArray(newDashArray)
+        setDashOffset(newDashArray - newDashArray * tempAC / 40)
+    }, [isUnderLarge])
+
+
     useEffect(() => {
     if (env_temp && env_humid && env_lux) {
-        // const value = env_temp.value;
-        // console.log("Temp data: ", value);
         setNew('temperature', env_temp.value);
         setNew('humidity', env_humid.value);
         setNew('lux', env_lux.value)
         }
     }, [env_temp, env_humid, env_lux])
 
-    const [postLivingroom, response] = usePostLivingroomMutation()
-    
-    const [dashOffset, setDashOffset] = useState(dashArray);
-    // const [dashOffset, setDashOffset] = useState();
-
     useEffect (() => {
-        if (data) {
-            const value = JSON.parse(data?.value);
-            setAllInfo(value);
-            allInfoRef.current = value;
-            setFirstLoad(false)
-
-            // Set automode
-            // setNew('temperature', value.temperature);
-            // setNew('humidity', value.humidity);
-            // setNew('lux', value.lux);
-            setNew('AC', value.AC); setNew('tempAC', value.tempAC);
-            setNew('chandeliers', value.chandeliers);
-            setNew('light1', value.light1); setNew('light2', value.light2);
-            setFirstLoad(false);
-            setDashOffset(dashArray - dashArray * (value.tempAC/ 40));
+        if (chans_val)
+            setNew('chandeliers', chans_val.value);
+        if (AC_state) {
+            setNew('AC', AC_state.value)
         }
-    }, [data]);
-
-    const updateAllInfo = (field) => {
-        const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-        const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1) + "+07:00";
-        if (field === 'autoMode') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                autoMode: autoMode,
-                updated_at: localISOTime
-            }))
+        if (AC_val) {
+            let int_value = Math.ceil(parseInt(AC_val.value) / 100 * 40); 
+            setNew('tempAC', int_value);
+            setDashOffset(dashArray - dashArray * (int_value / 40));
         }
-        else if (field === 'air_conditioner') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                AC: AC,
-                tempAC: tempAC,
-                updated_at: localISOTime
-            }))
+        setFirstLoad(false);
+    }, [chans_val, AC_state, AC_val])
+
+    const updateAllInfo = async (field) => {
+        if (field === 'air_conditioner') {
+            await postAC({"value": AC})
+            if (AC == "ON")
+                await postTempAC({"value": Math.floor(tempAC / 40 * 100)})
+        }
+        else if (field === 'tempAC') {
+            if (AC == "ON") {
+                await postTempAC({"value": Math.floor(tempAC / 40 * 100) })
+            }
         }
         else if (field === 'chandeliers') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                chandeliers: chandeliers,
-                updated_at: localISOTime,
-            }))
-        }
-        else if (field === 'light1') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                light1: light1,
-                updated_at: localISOTime,
-            }))
-        }
-        else if (field === 'light2') {
-            setAllInfo((prevData) => ({
-                ...prevData,
-                light2: light2,
-                updated_at: localISOTime,
-            }))
+            await postChandeliers({"value": chandeliers})
         }
     } 
 
-    const handleSubmit = async () => {
-        const response = await LivingroomPost({"value": JSON.stringify(allInfo)});
-        console.log("reponse send to api: ", response);
-        // try {
-        //     const response = await postLivingroom({"value": JSON.stringify(allInfo)}).unwrap()
-        //     console.log("response from mutation: ", response);
-        // } catch (error) {
-        //     console.log("Error: ", error)
-        // }
-    }
+    useEffect(() => {
+        if (!firstLoad) {
+            updateAllInfo('air_conditioner');
+        }
+    }, [AC])
 
-    const [colorMinus, setColorMinus] = useState("#E7D5FF");
-    const [colorPlus, setColorPlus] = useState("#E7D5FF");
+    useEffect(() => {
+        if (!firstLoad) {
+            updateAllInfo('tempAC');
+        }
+    }, [tempAC])
 
+    useEffect(() => {
+        if (!firstLoad) {
+            updateAllInfo('chandeliers');
+        }
+    }, [chandeliers])
+
+    // Support Functions
     const handleClickDown = () => {
         // Thay đổi màu nền khi nhấp vào
         setColorMinus("#C27CF9");
@@ -175,41 +204,6 @@ export default function LivingRoom() {
         setDashOffset(curr => tempAC === 30? curr : (dashArray - dashArray * (tempAC + 1) / 40))
       };
 
-    useEffect(() => {
-        if (!firstLoad) {
-            updateAllInfo('air_conditioner');
-        }
-    }, [AC, tempAC])
-
-    useEffect(() => {
-        if (!firstLoad) {
-            updateAllInfo('chandeliers');
-        }
-    }, [chandeliers])
-
-    useEffect(() => {
-        if (!firstLoad) {
-            updateAllInfo('light1');
-        }
-    }, [light1])
-
-    useEffect(() => {
-        if (!firstLoad) {
-            updateAllInfo('light2');
-        }
-    }, [light2])
-
-    useEffect(() => {
-        if (allInfo && !commandAssistant) {
-            if (JSON.stringify(allInfo) !== JSON.stringify(allInfoRef.current)) {
-                // Nếu có sự thay đổi, gọi handleSubmit()
-                handleSubmit();
-                allInfoRef.current = allInfo;
-            }
-        }
-        // setFirstLoad(true)
-    }, [allInfo])
-
     return (
     <div className={`w-full flex flex-col-reverse lg:flex-row gap-4 lg:gap-2 mt-4 mb-4 `}>
         {/* AirCond block */}
@@ -221,7 +215,7 @@ export default function LivingRoom() {
                     <div className="w-1/3 gap-2 md:gap-3">
                         <div className="flex flex-row justify-end gap-1 w-full">
                             {!isFold &&
-                            (AC === "on" ? 
+                            (AC === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Hoạt động{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -229,7 +223,7 @@ export default function LivingRoom() {
                             </p>)}
 
                             <button className="switch flex">
-                                <ReactSwitch onChange={() => setToggleState('AC')} checked={AC === "on"}/>
+                                <ReactSwitch onChange={() => setNew('AC', AC === "OFF" ? "ON" : "OFF")} checked={AC === "ON"}/>
                             </button>
                         </div>
                     </div>
@@ -241,7 +235,7 @@ export default function LivingRoom() {
                         {/* <Minus strokeWidth={9} /> */}
                         <Minus strokeWidth={5}/>
                     </button>
-                    <span className={`text-[18px]  lg:text-3xl font-bold`}>10{'\u00b0'}C</span>     
+                    <span className={`text-[18px]  lg:text-3xl font-bold`}>10</span>     
                     <div className={`num_ring relative flex justify-center items-center w-[200px] h-[200px] lg:w-[345px] lg:h-[345px]`}>
                         <div className={`${styles.outer} w-[200px] h-[200px] p-[25px] lg:w-[345px] lg:h-[345px] lg:p-[36px] rounded-full`}>
                             <div className={`${styles.inner} w-[150px] h-[150px] lg:w-[273px] lg:h-[273px] rounded-full flex items-center justify-center shadow-2xl z-50 bg-[#EFEFEF]`}>
@@ -299,46 +293,24 @@ export default function LivingRoom() {
                                 />
                         </svg>}
                     </div>
-                    <span className={`text-[18px] lg:text-3xl font-bold`}>30{'\u00b0'}C</span>
+                    <span className={`text-[18px] lg:text-3xl font-bold`}>30</span>
                     <button onClick={handleClickUp} className={`w-[30px] h-[50px] lg:w-[92px] lg:h-[73px] flex items-center justify-center text-[50px] font-extrabold text-[#09006E] bg-[${colorPlus}] rounded-3xl shadow-lg`}>
                         {/* <Plus strokeWidth={6} size={30} /> */}
                         <Plus strokeWidth={4} size={25} />
 
                     </button>
                 </div>
-                <div className={`mt-4 text-[18px] lg:text-3xl font-bold flex items-center justify-center`}>0 {'\u00b0'}C</div>
+                <div className={`mt-4 text-[18px] lg:text-3xl font-bold flex items-center justify-center`}>0</div>
             </div>
 
             {/* Lights block */}
             <div className={`w-full lg:h-[38rem] xl:w-[52rem] flex flex-col gap-8 mt-8 px-4 lg:px-0 lg:gap-0  bg-[#F7F1FF] rounded-3xl mb-8`}>
                 <div className={`w-full h-1/2 rounded-3xl px-4 flex flex-col lg:flex-row gap-8 lg:gap-20 justify-center items-center`}>
-                    {/* Fridge */}
-                    {/* <div className={`w-full lg:w-[40%] h-2/3 bg-[#09006E] flex flex-col rounded-3xl pt-3 pb-4 mt-8 gap-4 lg:mt-0 lg:pb-0 lg:gap-8`}>
-                         Row 1 of fridge 
-                        <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {onAC === "on" ? 
-                            <p className="text-white overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
-                            Bật{" "}
-                            </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
-                                Tắt{" "}
-                            </p>}
-
-                            <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={toggleState} checked={onAC === "on"}/>
-                            </div>
-                        </div>
-                        Row 2 of fridge
-                        <div className={`flex flex-row justify-center items-center gap-12 w-full mt-4`}>
-                            <FridgeIcon />
-                            <span className={`text-white text-2xl font-semibold text-center flex items-center justify-end w-1/2`}>Tủ lạnh</span>
-                        </div>
-                    </div> */}
-
                     {/* Chandeliers */}
                     <div className={`w-full lg:mx-10 mt-8 h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl pt-3 pb-4 gap-4 lg:mt-4 lg:pb-0 lg:gap-8`}>
                         {/* Row 1 of Chandeliers */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {chandeliers === "on" ? 
+                            {chandeliers === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-1/2 mb-[8px]">
@@ -346,7 +318,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('chandeliers')} checked={chandeliers === "on"}/>
+                                <ReactSwitch onChange={() => setToggleState('chandeliers')} checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of Chandeliers */}

@@ -16,13 +16,22 @@ export const smartHomeAPI = createApi({
       query: () => "/livingroom/data/last",
     }),
     getTemperature: builder.query({
-        query: () => "/temperature/data/last",
+        query: () => "/temp/data/last",
     }),
     getHumidity: builder.query({
-      query: () => "/humidity/data/last",
+      query: () => "/humi/data/last",
     }),
     getLux: builder.query({
-      query: () => "/lux/data/last",
+      query: () => "/light/data/last",
+    }),
+    getChandeliers: builder.query({
+      query: () => "/chandeliers/data/last",
+    }),
+    getAC: builder.query({
+      query: () => "/control-fan/data/last",
+    }),
+    getTempAC: builder.query({
+      query: () => "/ac/data/last",
     }),
     postLivingroom: builder.mutation({
       query: (body) => ({
@@ -32,7 +41,34 @@ export const smartHomeAPI = createApi({
         transformResponse: (response, meta, arg) => response.data,
       })
     }),
+    postChandeliers: builder.mutation({
+      query: (body) => ({
+        url: "/chandeliers/data",
+        method: 'POST',
+        body,
+        transformResponse: (response, meta, arg) => response.data,
+      })
+    }),
+    postAC: builder.mutation({
+      query: (body) => ({
+        url: "/control-fan/data",
+        method: 'POST',
+        body,
+        transformResponse: (response, meta, arg) => response.data,
+      })
+    }),
+    postTempAC: builder.mutation({
+      query: (body) => ({
+        url: "/ac/data",
+        method: 'POST',
+        body,
+        transformResponse: (response, meta, arg) => response.data,
+      })
+    }),
   })
 });
 
-export const { useGetLivingroomQuery, useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery, usePostLivingroomMutation } = smartHomeAPI;
+export const { useGetLivingroomQuery, useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery, 
+  useGetChandeliersQuery, useGetACQuery, useGetTempACQuery,
+  usePostLivingroomMutation, usePostChandeliersMutation,usePostACMutation, usePostTempACMutation } 
+  = smartHomeAPI;

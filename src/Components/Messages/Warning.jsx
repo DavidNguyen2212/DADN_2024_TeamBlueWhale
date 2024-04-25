@@ -1,22 +1,27 @@
 import { useState } from "react";
 import { WarningIcon, WarningIconSmall } from "../../Assets/icons/Icon";
 import styles from "./MessageItem.module.css";
-import { X } from 'lucide-react'
+import { BookOpenCheck, BellDot } from 'lucide-react'
 import { useMediaQuery } from "react-responsive";
+import { useNewNotice } from "../../Contexts/NoticeContext";
+import { MarkNotifasRead } from "../../API/NotificationAPI/NotificationAPI";
 
 const Warning = (props) => {
-    const [isClear, setIsClear] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date()); 
+    const [isRead, setIsRead] = useState(props.isRead);
+    const [currentTime, setCurrentTime] = useState(props.time); 
     const formattedTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const isSmall = useMediaQuery({ maxWidth: 640 });
+    const NewNoticeContext = useNewNotice()
 
-    const handleClear = () => {
-        setIsClear(true); // Khi click vào nút đóng, đặt isHidden thành true để ẩn component
+    const handleRead = async () => {
+        setIsRead(true); 
+        // Sau khi đọc thì gọi API
+        NewNoticeContext.updateNewNotice(NewNoticeContext.newNotice - 1)
+        const response = await MarkNotifasRead(props.nid);
     };
 
     return (
-        <>
-        {isClear ? null : <div className={`${styles._Warning} ${isClear ? styles.hidden : ''} w-full md:w-3/4  bg-[#FFF8EC] flex flex-row gap-3 sm:gap-4 md:gap-8 px-3 py-3 sm:px-5 sm:py-5 shadow-lg`}>
+        <div onClick={handleRead} className={`${isRead ? styles._Warning : styles._WarningUnRead } w-full md:w-[90%]  bg-[#FFF8EC] flex flex-row gap-3 sm:gap-4 md:gap-8 lg:gap-12 px-3 py-3 sm:px-5 sm:py-5 ${isRead ? "shadow-lg" : ""} `}>
             {/* Icon and label */}
             <div>
                 {isSmall ? <WarningIconSmall /> : <WarningIcon />}
@@ -26,12 +31,10 @@ const Warning = (props) => {
                 <p className={`${styles._time_change}`}>{formattedTime}</p>
                 <div className={`text-base md:text-xl`}>Ai đó không phải bạn và thành viên gia đình, đang cố gắng mở khóa tôi!</div>
             </div>
-            <button onClick={handleClear} className={`flex md:items-center text-[#968E8E]`}>
-                {isSmall ? <X size={25} /> : <X size={35}/>}
+            <button  className={`flex md:items-center text-[#968E8E]`}>
+            {isRead ? (isSmall ? <BookOpenCheck size={25} /> : <BookOpenCheck size={35}/>) : (isSmall ? <BellDot color="blue" size={25} /> : <BellDot color="blue" size={35}/>)}
             </button>
-        </div>}
-        </>
-        
+        </div>   
     )
 }
 

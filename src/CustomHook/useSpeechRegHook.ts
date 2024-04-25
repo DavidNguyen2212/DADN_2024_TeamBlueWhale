@@ -8,7 +8,7 @@ if ("webkitSpeechRecognition" in window) {
 }
 
 const useSpeechReg = () => {
-    const [text, setText] = useState("");
+    const [text, setText] = useState("Press to command me!");
     const [isListening, setIsListening] = useState(false);
     
     useEffect(() => {

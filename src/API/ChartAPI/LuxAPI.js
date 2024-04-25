@@ -1,6 +1,6 @@
 import SmartHomeAPI from "../SmartHomeAPI/SmartHomeAPI"
 
-const get_path = "/lux/data/chart";
+const get_path = "/light/data/chart";
 const queryString = "?start_time=2024-03-19T00:00:00Z"
 
 export const LuxChartGet = async () => {

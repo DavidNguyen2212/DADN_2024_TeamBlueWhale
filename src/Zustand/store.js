@@ -6,9 +6,9 @@ const lvroomInfo = {
     temperature: "", 
     humidity: "", 
     lux: "",
-    AC: "off", 
+    AC: "0", 
     tempAC: 0,
-    chandeliers: "off", 
+    chandeliers: "OFF", 
     light1: "off", 
     light2: "off",
     updated_at: ""
@@ -17,7 +17,7 @@ const lvroomInfo = {
 const useStore = create((set) => ({
   ...lvroomInfo,
   setNew: (key, newState) => set((state) => ({ ...state, [key]: newState })),
-  setToggleState: (key) => set((state) => ({ [key]: state[key] === "on" ? "off" : "on" })),
+  setToggleState: (key) => set((state) => ({ [key]: state[key] === "ON" ? "OFF" : "ON" })),
 }));
 
 // useStore.subscribe()
