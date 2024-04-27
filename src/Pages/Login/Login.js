@@ -83,7 +83,7 @@ const Login = () => {
     
     if (isLogin == 'success') {
       setRole("family_member");
-      const socket = io("http://127.0.0.1:5000");
+      const socket = io("https://dadn-2024-backend.onrender.com:3107");
       socket.on("connect", () => {
         console.log("Init socket IO with socketID = ", socket?.id);
       });
