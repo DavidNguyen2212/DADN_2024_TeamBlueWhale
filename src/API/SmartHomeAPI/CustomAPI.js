@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const CustomAPI = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://dadn-2024-backend.onrender.com",
   withCredentials: true,
   headers: { crossDomain: true, 'Content-Type': 'application/json' },
 
