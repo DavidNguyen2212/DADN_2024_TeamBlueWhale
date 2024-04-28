@@ -15,6 +15,7 @@ import useAuthPrivate from '../../CustomHook/useAuthPrivate';
 import Login4xx from '../../Modals/UserInfoModal/Login4xx';
 import usePersist from '../../CustomHook/usePersist';
 import mqtt from "mqtt";
+import Cookies from 'js-cookie';
 
 
 const LOGIN_URL = "https://dadn-2024-backend.onrender.com/login"
@@ -60,6 +61,7 @@ const Login = () => {
       setPassword();
       setAuth({username, password, access_token})
       togglePersist()
+      Cookies.set('csrf_refresh_token', response?.data?.csrf_refresh_token, {secure: true, sameSite: 'None'})
     }
     catch (err) {
       if (!err?.response) {
