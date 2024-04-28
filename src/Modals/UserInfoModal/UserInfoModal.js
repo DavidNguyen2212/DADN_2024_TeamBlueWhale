@@ -21,7 +21,7 @@ function UserInfoModal({children}) {
       }
       // console.log(document.cookie)
       axios.defaults.withCredentials = true;
-      // console.log(document.cookie)
+      console.log("Cookie: ", document.cookie)
       let cookies = document.cookie.split(';');
 
   // Duyệt qua từng cookie để tìm mục có tên là "csrf-token"
