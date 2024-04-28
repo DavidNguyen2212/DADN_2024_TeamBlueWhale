@@ -335,7 +335,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8`}>
                         {/* Row 1 of Light 1 */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {chandeliers === "on" ? 
+                            {chandeliers === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -343,7 +343,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('light1')} checked={light1 === "on"}/>
+                                <ReactSwitch onChange={() => setToggleState('chandeliers')} checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of Light 1 */}
@@ -357,7 +357,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8 `}>
                         {/* Row 1 of light 2*/}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {chandeliers === "on" ? 
+                            {chandeliers === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -365,7 +365,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('light2')} checked={light2 === "on"}/>
+                                <ReactSwitch onChange={() => setToggleState('chandeliers')} checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of light 2 */}
