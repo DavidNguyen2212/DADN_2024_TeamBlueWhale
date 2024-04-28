@@ -15,10 +15,11 @@ const Devices = () => {
     setRoom_type(event.target.value); // Lưu giá trị của phòng được chọn vào state
   };
 
-  useEffect(() => {
-    if (!document.cookie.includes("csrf_refresh_token"))
-      navigate("/Login");
-  }, [])
+  // useEffect(() => {
+  //   console.log
+  //   if (!document.cookie.includes("csrf_refresh_token"))
+  //     navigate("/Login");
+  // }, [])
   return (
     <div className={`bg-white`}>
       <Header pageName={"Thiết bị"}></Header>

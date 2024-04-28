@@ -1,5 +1,4 @@
 import Header from "../../Components/Header/Header";
-import { io } from "socket.io-client";
 import { useState, useEffect } from "react";
 
 // const socket = io('http://127.0.0.1:5000/');

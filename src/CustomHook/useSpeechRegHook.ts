@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 let recognition: any = null;
 if ("webkitSpeechRecognition" in window) {

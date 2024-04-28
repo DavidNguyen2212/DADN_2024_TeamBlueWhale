@@ -5,7 +5,7 @@ import {X} from 'lucide-react'
 import { useSocket } from "../../Contexts/SocketIOContext";
 import axios from "axios"
 
-const LOGOUT_URL = "http://localhost:5000/logout"
+const LOGOUT_URL = "https://dadn-2024-backend.onrender.com/logout"
 
 function UserInfoModal({children}) {
     const navigate = useNavigate();
