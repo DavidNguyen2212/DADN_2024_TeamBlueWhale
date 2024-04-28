@@ -60,7 +60,7 @@ const Message = () => {
   // const response = useAuthPrivate()
   useEffect(() => {
       if (!UserSocket) {
-          const socket = io("http://127.0.0.1:5000");
+          const socket = io("https://dadn-2024-backend.onrender.com");
           socket.on("connect", () => {
               console.log("Init socket IO with socketID = ", socket?.id);
           });
