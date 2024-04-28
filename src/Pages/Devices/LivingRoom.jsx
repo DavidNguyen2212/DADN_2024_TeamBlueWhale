@@ -33,56 +33,56 @@ export default function LivingRoom() {
         setClient(mqtt.connect(host, mqttOption));
     };
 
-    useEffect(() => {
-        let isMounted = true;
-        // if (effectRan == false) {
-            mqttConnect("mqtt://io.adafruit.com", {
-            host: "io.adafruit.com",
-            port: 443,
-            username: process.env.REACT_APP_DAVID_NAME,
-            password: process.env.REACT_APP_DAVID_KEY});
-        // }
+    // useEffect(() => {
+    //     let isMounted = true;
+    //     // if (effectRan == false) {
+    //         mqttConnect("mqtt://io.adafruit.com", {
+    //         host: "io.adafruit.com",
+    //         port: 443,
+    //         username: process.env.REACT_APP_DAVID_NAME,
+    //         password: process.env.REACT_APP_DAVID_KEY});
+    //     // }
         
-        return () => {
-            isMounted = false;
-            effectRan.current = true
-            if (client) {
-                console.log("Xóa client")
-                client.end();
-            }
-        };
-    }, [])
+    //     return () => {
+    //         isMounted = false;
+    //         effectRan.current = true
+    //         if (client) {
+    //             console.log("Xóa client")
+    //             client.end();
+    //         }
+    //     };
+    // }, [])
     
-    useEffect(() => {
-        if (client && effectRan) {
-            client.on('connect', () => {
-                setConnectStatus('Connected');
-                console.log("Connected!")
-                client.subscribe("david_nguyen7603/feeds/temp")
-                client.subscribe("david_nguyen7603/feeds/light")
-                client.subscribe("david_nguyen7603/feeds/humi")
-            });
-            console.log(client);
-            client.on('error', (err) => {
-                console.error('Connection error: ', err);
-                client.end();
-            });
-            client.on('reconnect', () => {
-                setConnectStatus('Reconnecting');
-            });
-            client.on('message', (topic, message) => {
-                const payload = { topic, message: message.toString() };
-                console.log("Nhan du lieu", payload)
-                setPayLoad(payload);
-            });
-        }
+    // useEffect(() => {
+    //     if (client && effectRan) {
+    //         client.on('connect', () => {
+    //             setConnectStatus('Connected');
+    //             console.log("Connected!")
+    //             client.subscribe("david_nguyen7603/feeds/temp")
+    //             client.subscribe("david_nguyen7603/feeds/light")
+    //             client.subscribe("david_nguyen7603/feeds/humi")
+    //         });
+    //         console.log(client);
+    //         client.on('error', (err) => {
+    //             console.error('Connection error: ', err);
+    //             client.end();
+    //         });
+    //         client.on('reconnect', () => {
+    //             setConnectStatus('Reconnecting');
+    //         });
+    //         client.on('message', (topic, message) => {
+    //             const payload = { topic, message: message.toString() };
+    //             console.log("Nhan du lieu", payload)
+    //             setPayLoad(payload);
+    //         });
+    //     }
 
-        return () => {
-            if (client) {
-                client.removeAllListeners();
-            }
-        };
-      }, [client]);
+    //     return () => {
+    //         if (client) {
+    //             client.removeAllListeners();
+    //         }
+    //     };
+    //   }, [client]);
 
 
     const [firstLoad, setFirstLoad] = useState(true);
