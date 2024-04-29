@@ -97,25 +97,25 @@ export default function LivingRoom() {
     const [colorPlus, setColorPlus] = useState("#E7D5FF");
 
     // API area
-    const {data: env_temp} = useGetTemperatureQuery({}, {
+    const {data: env_temp} = useGetTemperatureQuery({}, { refetchOnMountOrArgChange: true
         // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
-    const {data: env_humid} = useGetHumidityQuery({}, {
+    // const [tempquery] = useGetTemperatureQuery()
+    const {data: env_humid} = useGetHumidityQuery({}, {refetchOnMountOrArgChange: true
         // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
-    const {data: env_lux} = useGetLuxQuery({}, {
+    const {data: env_lux} = useGetLuxQuery({}, { refetchOnMountOrArgChange: true
         // pollingInterval: 10000, skipPollingIfUnfocused: false,
     })
-    const {data: chans_val} = useGetChandeliersQuery({}, {
+    const {data: chans_val} = useGetChandeliersQuery({}, {refetchOnMountOrArgChange: true
         // pollingInterval: 3000, skipPollingIfUnfocused: false,
     })
-    const {data: AC_state} = useGetACQuery({}, {
+    const {data: AC_state} = useGetACQuery({}, {refetchOnMountOrArgChange: true
         // pollingInterval: 3000, skipPollingIfUnfocused: false,
     })
-    const {data: AC_val} = useGetTempACQuery({}, {
+    const {data: AC_val} = useGetTempACQuery({}, {refetchOnMountOrArgChange: true
         // pollingInterval: 3000, skipPollingIfUnfocused: false,
     })
-    // const [postLivingroom, response] = usePostLivingroomMutation()
     const [postAC, responseAC] = usePostACMutation()
     const [postTempAC, responseTempAC] = usePostTempACMutation()
     const [postChandeliers, responseChans] = usePostChandeliersMutation()
@@ -127,7 +127,9 @@ export default function LivingRoom() {
         setDashOffset(newDashArray - newDashArray * tempAC / 40)
     }, [isUnderLarge])
 
-
+    // useEffect (() => {
+    //     tempquery({}).unwrap()
+    // }, [])
     useEffect(() => {
     if (env_temp && env_humid && env_lux) {
         setNew('temperature', env_temp.value);

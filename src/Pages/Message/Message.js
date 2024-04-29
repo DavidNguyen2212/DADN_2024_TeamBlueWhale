@@ -59,14 +59,14 @@ const Message = () => {
   }
   // const response = useAuthPrivate()
   useEffect(() => {
-      if (!UserSocket) {
-          const socket = io("https://dadn-2024-backend.onrender.com");
-          socket.on("connect", () => {
-              console.log("Init socket IO with socketID = ", socket?.id);
-          });
-          UserSocket?.connectSocket(socket);
+      // if (!UserSocket) {
+      //     const socket = io("https://dadn-2024-backend.onrender.com");
+      //     socket.on("connect", () => {
+      //         console.log("Init socket IO with socketID = ", socket?.id);
+      //     });
+      //     UserSocket?.connectSocket(socket);
           
-      }
+      // }
     
     fetchNotifs(format(selectedDate, "yyyy-MM-dd", { locale: vi }));
     setFirstLoad(false);

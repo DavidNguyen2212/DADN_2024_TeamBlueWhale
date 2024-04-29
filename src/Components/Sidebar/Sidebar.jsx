@@ -41,8 +41,9 @@ export function SidebarItem({func, icon, text, path, alert}) {
     const {expanded} = useContext(ExpandSidebarContext)
     const NewNoticeContext = useNewNotice();
     const UserSocket = useSocket();
-    UserSocket?.socket?.on('Announce change', async(data) => {
+    UserSocket?.socket.on('Announce change', async(data) => {
         const new_notice = await GetNumberNotifs();
+        console.log("Change")
         NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
     })
 
