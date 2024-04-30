@@ -33,6 +33,12 @@ const Dashboard = () => {
     text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
 
+  const listenOrstop = () => {
+    if (!isListening)
+      startListening()
+    else  
+      stopListening()
+  }
   
   const assistantSpeak = (message) => {
     var msg = new SpeechSynthesisUtterance(message);
@@ -413,7 +419,7 @@ const Dashboard = () => {
                   <span className={`font-bold text-xl tracking-wide`}>Voice Command</span>
                 </div>
                 <div className={`flex justify-center items-center`}>
-                    <button onClick={startListening} className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
+                    <button onClick={listenOrstop} className={`flex justify-center items-center w-[150px] h-[150px] rounded-full bg-[#9350FF] hover:bg-slate-400`}><Speech /></button>
                   </div>
                   {isListening && 
                   <div className={`italic text-gray-600 flex items-center justify-center`}>Tôi đang nghe đây...</div>
