@@ -13,8 +13,9 @@ export default function Sidebar({ children }) {
     const {setShowSideBar} = useContext(OpenSidebarContext)
 
     return (
-        <aside className={`h-screen flex min-h-full`}>
-            <nav className={`fixed h-full overflow-y-auto overflow-x-clip flex flex-col border-r shadow-sm bg-[#09006F]`}>
+        //  min-h-full
+        <aside className={`h-screen flex`}> 
+            <nav className={`fixed h-full overflow-x-clip flex flex-col border-r shadow-sm bg-[#09006F]`}>
                 <div className={`p-4 pb-2 flex ${expanded?"flex-row mb-11":"flex-col mb-4"}  justify-between`}>
                     <div className={`${expanded?"ml-2":"flex justify-center"} cursor-pointer `}>
                         <NavLink onClick={() => setShowSideBar(false)} to={"/Home"}>{<HomeIcon/>}</NavLink>
