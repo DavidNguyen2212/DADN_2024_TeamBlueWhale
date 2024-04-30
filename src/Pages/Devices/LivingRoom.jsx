@@ -90,8 +90,10 @@ export default function LivingRoom() {
                     setNew('chandeliers', message.toString());
                 else if (topic.includes("control-fan")) 
                     setNew('AC', message.toString());
-                else if (topic.includes("ac")) 
-                    setNew('tempAC', parseInt(message));
+                else if (topic.includes("ac")) {
+                    let int_value = Math.ceil(parseInt(message) / 100 * 40); 
+                    setNew('tempAC', int_value);
+                }
             });
         }
 
