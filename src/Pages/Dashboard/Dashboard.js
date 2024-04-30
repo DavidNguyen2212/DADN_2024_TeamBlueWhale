@@ -75,7 +75,7 @@ const Dashboard = () => {
   useEffect(() => {
       let isMounted = true;
       // if (effectRan == false) {
-      mqttConnect("wss://io.adafruit.com", {
+      mqttConnect("mqtt://io.adafruit.com", {
       host: "io.adafruit.com",
       port: 8883,
       username: process.env.REACT_APP_DAVID_NAME,
