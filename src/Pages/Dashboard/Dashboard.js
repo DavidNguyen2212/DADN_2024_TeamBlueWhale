@@ -24,6 +24,7 @@ import { usePostACMutation, usePostChandeliersMutation, usePostTempACMutation } 
 import useStore from "../../Zustand/store.js";
 import { VoiceProcessing } from "../../API/Assistant/AssistantAPI.js";
 import mqtt from "mqtt";
+import { protocol } from "socket.io-client";
 
 
 const Dashboard = () => {
@@ -74,11 +75,13 @@ const Dashboard = () => {
   useEffect(() => {
       let isMounted = true;
       // if (effectRan == false) {
-      mqttConnect("mqtt://io.adafruit.com", {
+      mqttConnect("wss://io.adafruit.com", {
       host: "io.adafruit.com",
-      port: 443,
+      port: 8883,
       username: process.env.REACT_APP_DAVID_NAME,
-      password: process.env.REACT_APP_DAVID_KEY});
+      password: process.env.REACT_APP_DAVID_KEY,
+      protocol: 'wss'
+    });
       // }
       const fetchDoorState = async() => {
         const response = await DoorGet();
