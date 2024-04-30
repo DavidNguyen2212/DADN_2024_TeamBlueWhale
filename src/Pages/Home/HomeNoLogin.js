@@ -9,6 +9,9 @@ import {
   faFileShield,
   faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
+import giathanhre from "../../Assets/images/giathanhre.jpg"
+import lienkettb from "../../Assets/images/lienkettb.jpg"
+import canhbaotn from "../../Assets/images/canhbaotainan.jpg"
 
 const HomeNoLogin = () => {
     return (
@@ -27,7 +30,7 @@ const HomeNoLogin = () => {
         <div className="max-w-[1280px] px-[70px] mx-auto flex flex-col md:flex-row items-center justify-between w-[90%] gap-6 my-[25px]">
           <div className="relative w-[300px] md:w-[30%] h-[280px] lg:h-[350px] rounded-[1.5rem] overflow-hidden shadow-lg">
             <img
-              src="https://cdn.pixabay.com/photo/2017/09/07/08/54/money-2724241_1280.jpg"
+              src={giathanhre}
               alt="Giá thành rẻ"
               className="w-full h-full object-cover"
             />
@@ -37,7 +40,7 @@ const HomeNoLogin = () => {
           </div>
           <div className="relative w-[300px] md:w-[30%] h-[280px] lg:h-[350px] rounded-[1.5rem] overflow-hidden shadow-lg">
             <img
-              src="https://cdn.pixabay.com/photo/2021/01/09/12/30/speaker-5902204_1280.jpg"
+              src={lienkettb}
               alt="Liên kết các thiết bị"
               className="w-full h-full object-cover"
             />
@@ -47,7 +50,7 @@ const HomeNoLogin = () => {
           </div>
           <div className="relative w-[300px] md:w-[30%] h-[280px] lg:h-[350px] rounded-[1.5rem] overflow-hidden shadow-lg">
             <img
-              src="https://cdn.pixabay.com/photo/2015/07/24/05/52/grid-857865_1280.jpg"
+              src={canhbaotn}
               alt="Cảnh báo tai nạn"
               className="w-full h-full object-cover bg-left"
             />

@@ -1,5 +1,5 @@
 .big_cover {
-    background: url("https://cdn.pixabay.com/photo/2021/03/13/04/11/touch-screen-6091015_1280.jpg") top center / cover no-repeat;
+    background: url("../../Assets/images/slidersmarthome.jpg") top center / cover no-repeat;
     padding-top: 50%;
     width: 100%;
     background-size: cover;
@@ -30,7 +30,7 @@
 }
 
 .content_img {
-  background: url("https://image.anhducdigital.vn/smarthome/giai-phap-smarthome/content-danh-muc/giai-phap-smarthome-2.jpg") center center / cover no-repeat;
+  background: url("../../Assets/images/giai-phap-smarthome-2.jpg") center center / cover no-repeat;
   background-position: left;
   padding-top: 60%;
   margin: 10px auto;

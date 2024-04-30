@@ -7,7 +7,6 @@ import {useAuth} from "../Contexts/AuthProvider"
 const useAuthPrivate = () => {
     const refreshTok = useRefreshToken();
     const { auth } = useAuth();
-    console.log("Auth: ", auth)
     useEffect(() => {
         const requestIntercept = CustomAPI.interceptors.request.use(
             config => {
@@ -22,7 +21,7 @@ const useAuthPrivate = () => {
             response => response,
             async (error) => {
                 const prevRequest = error?.config;
-                if (error?.response?.status === 401 || error?.response?.status === 422 && !prevRequest?.sent) {
+                if ((error?.response?.status === 401 || error?.response?.status === 422) && !prevRequest?.sent) {
                     prevRequest.sent = true;
                     const newAccessToken = await refreshTok();
                     prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

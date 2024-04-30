@@ -27,7 +27,7 @@ const Header = ({pageName}) => {
         };
     }, []);
 
-    const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
+    const {setShowSideBar} = useContext(OpenSidebarContext)
     return (
         // overflow-auto
         <div className={`Header_Container w-full h-[75px] md:h-[90px] bg-white flex items-center justify-between shadow-md z-50`}>

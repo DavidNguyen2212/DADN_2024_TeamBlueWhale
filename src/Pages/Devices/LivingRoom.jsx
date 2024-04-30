@@ -8,10 +8,8 @@ TemperatureIconSmall, HumidIconSmall} from "../../Assets/icons/Icon";
 import ReactSwitch from "react-switch";
 import { Minus, Plus } from "lucide-react";
 import styles from "./LivingRoom.module.css"
-import { LivingroomGet, LivingroomPost } from "../../API/LivingroomAPI/LivingroomAPI";
 import useStore from "../../Zustand/store";
-import { useGetACQuery, useGetChandeliersQuery, useGetLivingroomQuery, useGetTempACQuery, usePostACMutation, usePostChandeliersMutation, usePostLivingroomMutation, usePostTempACMutation } from "../../API/RTK_Query/apiSlice";
-import { useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery } from "../../API/RTK_Query/apiSlice";
+import { useGetAllAttributesQuery, usePostACMutation, usePostChandeliersMutation, usePostTempACMutation } from "../../API/RTK_Query/apiSlice";
 import mqtt from "mqtt";
 
 export default function LivingRoom() {
@@ -25,6 +23,7 @@ export default function LivingRoom() {
     }))
     
     const effectRan = useRef(false)
+    const [canMutate, setCanMutate] = useState(false)
     const [client, setClient] = useState(null);
     const [connectStatus, setConnectStatus] = useState();
     const [payLoad, setPayLoad] = useState();
@@ -33,57 +32,73 @@ export default function LivingRoom() {
         setClient(mqtt.connect(host, mqttOption));
     };
 
-    // useEffect(() => {
-    //     let isMounted = true;
-    //     // if (effectRan == false) {
-    //         mqttConnect("mqtt://io.adafruit.com", {
-    //         host: "io.adafruit.com",
-    //         port: 443,
-    //         username: process.env.REACT_APP_DAVID_NAME,
-    //         password: process.env.REACT_APP_DAVID_KEY});
-    //     // }
+    useEffect(() => {
+        let isMounted = true;
+        // if (effectRan == false) {
+            mqttConnect("mqtt://io.adafruit.com", {
+            host: "io.adafruit.com",
+            port: 443,
+            username: process.env.REACT_APP_DAVID_NAME,
+            password: process.env.REACT_APP_DAVID_KEY});
+        // }
         
-    //     return () => {
-    //         isMounted = false;
-    //         effectRan.current = true
-    //         if (client) {
-    //             console.log("Xóa client")
-    //             client.end();
-    //         }
-    //     };
-    // }, [])
+        return () => {
+            isMounted = false;
+            effectRan.current = true
+            if (client) {
+                console.log("Xóa client")
+                client.end();
+            }
+        };
+    }, [])
     
-    // useEffect(() => {
-    //     if (client && effectRan) {
-    //         client.on('connect', () => {
-    //             setConnectStatus('Connected');
-    //             console.log("Connected!")
-    //             client.subscribe("david_nguyen7603/feeds/temp")
-    //             client.subscribe("david_nguyen7603/feeds/light")
-    //             client.subscribe("david_nguyen7603/feeds/humi")
-    //         });
-    //         console.log(client);
-    //         client.on('error', (err) => {
-    //             console.error('Connection error: ', err);
-    //             client.end();
-    //         });
-    //         client.on('reconnect', () => {
-    //             setConnectStatus('Reconnecting');
-    //         });
-    //         client.on('message', (topic, message) => {
-    //             const payload = { topic, message: message.toString() };
-    //             console.log("Nhan du lieu", payload)
-    //             setPayLoad(payload);
-    //         });
-    //     }
+    useEffect(() => {
+        if (client && effectRan) {
+            client.on('connect', () => {
+                setConnectStatus('Connected');
+                console.log("Connected!")
+                client.subscribe("Giaqui14032002/feeds/temp")
+                client.subscribe("Giaqui14032002/feeds/light")
+                client.subscribe("Giaqui14032002/feeds/humi")
+                client.subscribe("Giaqui14032002/feeds/ac")
+                client.subscribe("Giaqui14032002/feeds/control-fan")
+                client.subscribe("Giaqui14032002/feeds/chandeliers")
+            });
+            console.log(client);
+            client.on('error', (err) => {
+                console.error('Connection error: ', err);
+                client.end();
+            });
+            client.on('reconnect', () => {
+                setConnectStatus('Reconnecting');
+            });
+            client.on('message', (topic, message) => {
+                const payload = { topic, message: message.toString() };
+                console.log("Nhan du lieu", payload)
+                // setPayLoad(payload);
+                if (topic.includes("temp"))
+                    setNew('temperature', parseFloat(message));
+                else if (topic.includes("humi"))
+                    setNew('humidity', parseFloat(message));
+                else if (topic.includes("light"))
+                    setNew('lux', parseInt(message));
+                else if (topic.includes("light"))
+                    setNew('lux', parseInt(message));
+                else if (topic.includes("chandeliers")) 
+                    setNew('chandeliers', message.toString());
+                else if (topic.includes("control-fan")) 
+                    setNew('AC', message.toString());
+                else if (topic.includes("ac")) 
+                    setNew('tempAC', parseInt(message));
+            });
+        }
 
-    //     return () => {
-    //         if (client) {
-    //             client.removeAllListeners();
-    //         }
-    //     };
-    //   }, [client]);
-
+        return () => {
+            if (client) {
+                client.removeAllListeners();
+            }
+        };
+      }, [client]);
 
     const [firstLoad, setFirstLoad] = useState(true);
     // Responsive
@@ -96,30 +111,26 @@ export default function LivingRoom() {
     const [colorMinus, setColorMinus] = useState("#E7D5FF");
     const [colorPlus, setColorPlus] = useState("#E7D5FF");
 
-    // API area
-    const {data: env_temp} = useGetTemperatureQuery({}, {
-        // pollingInterval: 10000, skipPollingIfUnfocused: false,
-    })
-    const {data: env_humid} = useGetHumidityQuery({}, {
-        // pollingInterval: 10000, skipPollingIfUnfocused: false,
-    })
-    const {data: env_lux} = useGetLuxQuery({}, {
-        // pollingInterval: 10000, skipPollingIfUnfocused: false,
-    })
-    const {data: chans_val} = useGetChandeliersQuery({}, {
-        // pollingInterval: 3000, skipPollingIfUnfocused: false,
-    })
-    const {data: AC_state} = useGetACQuery({}, {
-        // pollingInterval: 3000, skipPollingIfUnfocused: false,
-    })
-    const {data: AC_val} = useGetTempACQuery({}, {
-        // pollingInterval: 3000, skipPollingIfUnfocused: false,
-    })
-    // const [postLivingroom, response] = usePostLivingroomMutation()
+    const {data, isLoading, isError, isFetching, refetch } = useGetAllAttributesQuery({}, { refetchOnMountOrArgChange: true, forceRefetch: true });
     const [postAC, responseAC] = usePostACMutation()
     const [postTempAC, responseTempAC] = usePostTempACMutation()
     const [postChandeliers, responseChans] = usePostChandeliersMutation()
-    // console.log("CC")
+
+    useEffect(() => {
+        if (data) {
+            setNew('temperature', data[0]);
+            setNew('humidity', data[1]);
+            setNew('lux', data[2]);
+            setNew('chandeliers', data[3]);
+            setNew('AC', data[4]);
+            // console.log("Data 5: ", data[5])
+            let int_value = Math.ceil(parseInt(data[5]) / 100 * 40); 
+            setNew('tempAC', int_value);
+            setDashOffset(dashArray - dashArray * (int_value / 40));
+            setFirstLoad(false)
+        }
+        // console.log("on render")
+    }, [isLoading, isFetching])
 
     useEffect(() => {
         let newDashArray = isUnderLarge? 87.5 * Math.PI * 2 : 154.5 * Math.PI * 2;
@@ -127,39 +138,14 @@ export default function LivingRoom() {
         setDashOffset(newDashArray - newDashArray * tempAC / 40)
     }, [isUnderLarge])
 
-
-    useEffect(() => {
-    if (env_temp && env_humid && env_lux) {
-        setNew('temperature', env_temp.value);
-        setNew('humidity', env_humid.value);
-        setNew('lux', env_lux.value)
-        }
-    }, [env_temp, env_humid, env_lux])
-
-    useEffect (() => {
-        if (chans_val)
-            setNew('chandeliers', chans_val.value);
-        if (AC_state) {
-            setNew('AC', AC_state.value)
-        }
-        if (AC_val) {
-            let int_value = Math.ceil(parseInt(AC_val.value) / 100 * 40); 
-            setNew('tempAC', int_value);
-            setDashOffset(dashArray - dashArray * (int_value / 40));
-        }
-        setFirstLoad(false);
-    }, [chans_val, AC_state, AC_val])
-
     const updateAllInfo = async (field) => {
         if (field === 'air_conditioner') {
             await postAC({"value": AC})
-            if (AC == "ON")
+            if (AC === "ON")
                 await postTempAC({"value": Math.floor(tempAC / 40 * 100)})
         }
         else if (field === 'tempAC') {
-            if (AC == "ON") {
-                await postTempAC({"value": Math.floor(tempAC / 40 * 100) })
-            }
+            await postTempAC({"value": Math.floor(tempAC / 40 * 100) })
         }
         else if (field === 'chandeliers') {
             await postChandeliers({"value": chandeliers})
@@ -167,19 +153,19 @@ export default function LivingRoom() {
     } 
 
     useEffect(() => {
-        if (!firstLoad) {
+        if (!firstLoad && canMutate) {
             updateAllInfo('air_conditioner');
         }
     }, [AC])
 
     useEffect(() => {
-        if (!firstLoad) {
+        if (!firstLoad && canMutate) {
             updateAllInfo('tempAC');
         }
     }, [tempAC])
 
     useEffect(() => {
-        if (!firstLoad) {
+        if (!firstLoad && canMutate) {
             updateAllInfo('chandeliers');
         }
     }, [chandeliers])
@@ -194,6 +180,7 @@ export default function LivingRoom() {
         }, 100);
         setNew('tempAC', tempAC === 0 ? 0 : (tempAC - 1));
         setDashOffset(curr => tempAC === 0? curr : (dashArray - dashArray * (tempAC - 1) / 40))
+        setCanMutate(true)
     };
     const handleClickUp = () => {
         setColorPlus("#C27CF9");
@@ -202,6 +189,7 @@ export default function LivingRoom() {
         }, 100);
         setNew('tempAC', tempAC === 30 ? 30 : (tempAC + 1))
         setDashOffset(curr => tempAC === 30? curr : (dashArray - dashArray * (tempAC + 1) / 40))
+        setCanMutate(true)
       };
 
     return (
@@ -223,7 +211,7 @@ export default function LivingRoom() {
                             </p>)}
 
                             <button className="switch flex">
-                                <ReactSwitch onChange={() => setNew('AC', AC === "OFF" ? "ON" : "OFF")} checked={AC === "ON"}/>
+                                <ReactSwitch onChange={() => {setNew('AC', AC === "OFF" ? "ON" : "OFF"); setCanMutate(true)}} checked={AC === "ON"}/>
                             </button>
                         </div>
                     </div>
@@ -318,7 +306,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('chandeliers')} checked={chandeliers === "ON"}/>
+                                <ReactSwitch onChange={() => {setToggleState('chandeliers'); setCanMutate(true)}} checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of Chandeliers */}
@@ -335,7 +323,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8`}>
                         {/* Row 1 of Light 1 */}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {chandeliers === "on" ? 
+                            {chandeliers === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -343,7 +331,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('light1')} checked={light1 === "on"}/>
+                                <ReactSwitch checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of Light 1 */}
@@ -357,7 +345,7 @@ export default function LivingRoom() {
                     <div className={`w-[45%] lg:w-[40%] h-2/3 bg-[#E7D5FF] flex flex-col rounded-3xl py-3 gap-8 `}>
                         {/* Row 1 of light 2*/}
                         <div className="flex flex-row justify-center gap-8 w-full mt-4">
-                            {chandeliers === "on" ? 
+                            {chandeliers === "ON" ? 
                             <p className="text-[#066DCC] overflow-hidden flex text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
                             Bật{" "}
                             </p> : <p className="text-red-500 overflow-hidden flex italic text-[16px] md:text-[20px] font-bold w-auto lg:w-1/2 mb-[8px]">
@@ -365,7 +353,7 @@ export default function LivingRoom() {
                             </p>}
 
                             <div className="switch flex items-center justify-end ">
-                                <ReactSwitch onChange={() => setToggleState('light2')} checked={light2 === "on"}/>
+                                <ReactSwitch checked={chandeliers === "ON"}/>
                             </div>
                         </div>
                         {/* Row 2 of light 2 */}
