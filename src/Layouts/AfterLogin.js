@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, createContext } from "react";
 import FullSidebar from "../Components/Sidebar/FullSidebar";
 import styles from "./AfterLogin.module.css";
 import { useGetTemperatureQuery } from "../API/RTK_Query/apiSlice";
+import { useMediaQuery } from "react-responsive";
+
 
 export const OpenSidebarContext = createContext()
 const AfterLogin = ({children, role}) => {
@@ -12,7 +14,14 @@ const AfterLogin = ({children, role}) => {
 
     const [showSideBar, setShowSideBar] = useState(true);
     const [paddingLeft, setPaddingLeft] = useState("pl-[66px]");
-
+    const isMedium = useMediaQuery({maxWidth: 1024})
+    const effectRan = useRef(false)
+    useEffect(() => {
+      if (effectRan.current)
+        setShowSideBar(!isMedium)
+        
+      return () => effectRan.current = true
+    }, [])
     // const handleOnClickOut = (e) => {
     //     if (elementRef.current &&
     //       !elementRef.current.contains(e.target) &&
@@ -25,28 +34,28 @@ const AfterLogin = ({children, role}) => {
     //     }
     // };
     
-    useEffect(() => {
-      const handleResize = () => {
-        setShowSideBar(window.innerWidth > 1024);
-      }
+    // useEffect(() => {
+    //   const handleResize = () => {
+    //     setShowSideBar(window.innerWidth > 1024);
+    //   }
       
-      handleResize()
-      window.addEventListener('resize', handleResize)
+    //   handleResize()
+    //   window.addEventListener('resize', handleResize)
 
-      return () => {
-        window.removeEventListener('resize', handleResize)
-      }
-        // if (window.innerWidth > 1024) {
-        //   setShowSideBar(true);
-        // } else {
-        //   setShowSideBar(false);
-        // }
+    //   return () => {
+    //     window.removeEventListener('resize', handleResize)
+    //   }
+    //     // if (window.innerWidth > 1024) {
+    //     //   setShowSideBar(true);
+    //     // } else {
+    //     //   setShowSideBar(false);
+    //     // }
     
-        // document.addEventListener("click", handleOnClickOut);
-        // return () => {
-        //   document.removeEventListener("click", handleOnClickOut);
-        // };
-    }, []);
+    //     // document.addEventListener("click", handleOnClickOut);
+    //     // return () => {
+    //     //   document.removeEventListener("click", handleOnClickOut);
+    //     // };
+    // }, []);
     
     // useEffect(() => {
     //     setPaddingLeft("pl-[0px]");
