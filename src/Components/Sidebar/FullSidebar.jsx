@@ -21,7 +21,7 @@ const FullSidebar = ({showSideBar}) => {
     }, [UserSocket])
 
     return (
-    <div style={{transition:"transform 0.4s ease-in-out"}} className={`fixed h-[100vh] ${showSideBar ? "z-50" : styles.SideBarHide}`}>
+    <div style={{transition:"transform 0.4s ease-in-out"}} className={`fixed z-50 bottom-0 top-0 ${showSideBar ? "" : styles.SideBarHide}`}>
         <Sidebar>
             <SidebarItem icon={<DashBoardIcon size={50}/>} text="Dashboard"  path="/Dashboard"/>
             <SidebarItem icon={<DevicesIcon size={50}/>} text="Devices" path="/Devices"/>
