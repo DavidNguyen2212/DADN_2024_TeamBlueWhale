@@ -77,7 +77,7 @@ const Dashboard = () => {
       // if (effectRan == false) {
       mqttConnect("mqtt://io.adafruit.com", {
       host: "io.adafruit.com",
-      port: 8883,
+      port: 443,
       username: process.env.REACT_APP_DAVID_NAME,
       password: process.env.REACT_APP_DAVID_KEY,
       protocol: 'wss'
