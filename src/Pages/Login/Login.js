@@ -1,20 +1,16 @@
 import styles from './Login.module.css'
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../App';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { io } from 'socket.io-client';
 import { useSocket } from '../../Contexts/SocketIOContext';
 import { useNewNotice } from '../../Contexts/NoticeContext';
-import { getNotice } from '../../API/MessageAPI/MessageAPI';
 import { GetNumberNotifs } from '../../API/NotificationAPI/NotificationAPI';
 import axios from 'axios';
-// import useAuth from '../../CustomHook/useAuth';
 import { useAuth } from '../../Contexts/AuthProvider';
-import useAuthPrivate from '../../CustomHook/useAuthPrivate';
 import Login4xx from '../../Modals/UserInfoModal/Login4xx';
 import usePersist from '../../CustomHook/usePersist';
-import mqtt from "mqtt";
 import Cookies from 'js-cookie';
 
 
@@ -28,24 +24,16 @@ const Login = () => {
   const [persist, setPersist] = usePersist()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [errMsg, setErrMsg] = useState("")
   const [open401, setOpen401] = useState(false)
   const [open, setOpen] = useState(false)
-
   const {setAuth} = useAuth()
-  // const CustomAPI = useAuthPrivate()
 
-  const togglePersist = () => {
-    setPersist(true)
-    console.log("set to true")
-  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     setOpen401(false)
     setOpen(false)
     let isLogin = 'success'
     try {
-      
       axios.defaults.withCredentials = true;
       const response = await axios.post(LOGIN_URL, JSON.stringify({username, password}), 
       {
@@ -53,14 +41,13 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
- 
       })
-      console.log(JSON.stringify(response?.data));
+      // console.log(JSON.stringify(response?.data));
       const access_token = response?.data?.access_token;
       setUsername();
       setPassword();
       setAuth({username, password, access_token})
-      togglePersist()
+      setPersist(true)
       Cookies.set('csrf_refresh_token', response?.data?.csrf_refresh_token, {secure: true, sameSite: 'None'})
     }
     catch (err) {
@@ -70,20 +57,20 @@ const Login = () => {
       } else if (err.response?.status === 401) {
         isLogin = 'Incorrect username or password'
         setOpen401(true)
-        console.log(401)
       } 
       else if (err.response?.status === 403) {
         isLogin = 'Already sign in';
+        setAuth({username, password})
         navigate("/Dashboard")
       }
       else {
         isLogin = 'Login Failed';
         setOpen(true)
       }
-      console.log("error: ", err)
+      console.log("Error when logging in: ", err)
     }
     
-    if (isLogin == 'success') {
+    if (isLogin === 'success') {
       setRole("family_member");
       const socket = io("https://dadn-2024-backend.onrender.com");
       socket.on("connect", () => {

@@ -8,38 +8,30 @@ import chad3 from "../../Assets/images/chad3.jpg";
 import chad4 from "../../Assets/images/chad4.png";
 import chad5 from "../../Assets/images/chad5.png";
 import chad6 from "../../Assets/images/chad6.png";
+import cam1 from "../../Assets/images/cam1.gif"
+import cam2 from "../../Assets/images/cam2.gif"
+import cam3 from "../../Assets/images/cam3.gif"
 import door_open from "../../Assets/images/door_open.jpg"
 import door_closed from "../../Assets/images/door_closed.jpg"
 import { useState, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import ReactSwitch from "react-switch";
-import {SettingsIcon, ThermometerSunIcon } from "lucide-react"
+import { SettingsIcon, ThermometerSunIcon } from "lucide-react"
 import Chart from "../../Components/Dashboard/Chart";
 import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
 import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
 import { usePostACMutation, usePostChandeliersMutation, usePostTempACMutation } from "../../API/RTK_Query/apiSlice.jsx";
 import useStore from "../../Zustand/store.js";
 import { VoiceProcessing } from "../../API/Assistant/AssistantAPI.js";
+import mqtt from "mqtt";
 
 
 const Dashboard = () => {
-  const toISOStringNow = () => {
-    const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1) + "+07:00";
-    return localISOTime;
-  }
+
   const {
     text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
 
-  const {commandAssistant, setNew} = useStore((state) => ({
-    commandAssistant: state.commandAssistant,
-    setNew: state.setNew
-  }))
-
-  const [postAC, responseAC] = usePostACMutation()
-  const [postTempAC, responseTempAC] = usePostTempACMutation()
-  const [postChandeliers, responseChans] = usePostChandeliersMutation()
   
   const assistantSpeak = (message) => {
     var msg = new SpeechSynthesisUtterance(message);
@@ -54,12 +46,13 @@ const Dashboard = () => {
 
   const textToCommand = async (your_text) => {
     // assistantSpeak(your_text)
-    if (your_text != '' && your_text != "Press to command me!") {
+    if (your_text !== '' && your_text !== "Press to command me!" && your_text !== "Đã thực hiện!") {
+      setText("Đang xử lý...")
       const response = await VoiceProcessing(JSON.stringify({"usertext": your_text}))
       console.log("Response: ", response)
       assistantSpeak(response?.data?.Reply)
     }
-    setText('Press to command me!')
+    setText('Đã thực hiện!')
   };
 
   const [firstLoad, setFirstLoad] = useState(true);
@@ -69,41 +62,111 @@ const Dashboard = () => {
   const isFold = useMediaQuery({maxWidth: 280})
   const isVoiceandShort = useMediaQuery({maxWidth: 430})
 
+  const effectRan = useRef(false)
+  const [client, setClient] = useState(null);
+  const [connectStatus, setConnectStatus] = useState();
+  const [canMutate, setCanMutate] = useState(false)
+  const mqttConnect = (host, mqttOption) => {
+      setConnectStatus('Connecting');
+      setClient(mqtt.connect(host, mqttOption));
+  };
 
-  const [dateTime, setDateTime] = useState(new Date());
-  const [doorInfo, setDoorInfo] = useState("");
+  useEffect(() => {
+      let isMounted = true;
+      // if (effectRan == false) {
+      mqttConnect("mqtt://io.adafruit.com", {
+      host: "io.adafruit.com",
+      port: 443,
+      username: process.env.REACT_APP_DAVID_NAME,
+      password: process.env.REACT_APP_DAVID_KEY});
+      // }
+      const fetchDoorState = async() => {
+        const response = await DoorGet();
+        console.log("Reponse from Door api: ", response);
+        const value = response?.data?.value;
+        doorInfoRef.current = value;
+  
+        setOpenDoor(value);
+        setFirstLoad(false);
+      }
+      if (effectRan.current === false)
+        fetchDoorState();
+
+      return () => {
+          isMounted = false;
+          effectRan.current = true
+          if (client) {
+              console.log("Xóa client")
+              client.end();
+          }
+      };
+  }, [])
+  
+  useEffect(() => {
+      if (client && effectRan) {
+          client.on('connect', () => {
+              setConnectStatus('Connected');
+              console.log("Connected!")
+              client.subscribe("Giaqui14032002/feeds/door")
+          });
+          console.log(client);
+          client.on('error', (err) => {
+              console.error('Connection error: ', err);
+              client.end();
+          });
+          client.on('reconnect', () => {
+              setConnectStatus('Reconnecting');
+          });
+          client.on('message', (topic, message) => {
+              const payload = { topic, message: message.toString() };
+              // console.log("Nhan du lieu", payload)
+              if (topic.includes("door") && effectRan.current && message.toString() !== openDoor)
+                setOpenDoor(message.toString())
+          });
+      }
+
+      return () => {
+          if (client) {
+              client.removeAllListeners();
+          }
+      };
+    }, [client]);
+
+  const [dateTime, setDateTime] = useState('');
+
+  function formatTime(val) {
+    if (val < 10)
+      return '0'
+    return ''
+  }
+  function tick() {
+    const d = new Date();
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+
+    setDateTime(formatTime(h) + h + ' : ' + formatTime(m) + m + ' : ' + formatTime(s) +s)
+  }
+  useEffect(() => {
+    tick()
+    const timeID = setInterval(() => tick(), 1000)
+    return () => clearInterval(timeID)
+  }, [])
   const doorInfoRef = useRef("");
 
 
   useEffect(() => {
     if (firstLoad)
       setText("Press to command me!");
-
     else if (!isListening) {
       if (!["Press to command me!", "Đang xử lý...", "Đã xử lý!", "Vui lòng nhắc lại ạ!", "Đã thực hiện!"].includes(text)) 
         setTimeout(() => {textToCommand(text)}, 3000)
     }
-    
   }, [text])
-
-  useEffect(() => {
-    const fetchDoorState = async() => {
-      const response = await DoorGet();
-      console.log("reponse from Door api: ", response);
-      const value = response?.data?.value;
-      // setDoorInfo(value);
-      doorInfoRef.current = value;
-
-      setOpenDoor(value);
-      setFirstLoad(false);
-    }
-    fetchDoorState();
-  }, [])
-  
 
   const handleSubmit = async () => {
     const response = await DoorPost({"value": openDoor});
-    console.log("reponse send to api: ", response);
+    console.log("Send to door feed: ", response);
   }
 
   // Line chart
@@ -118,15 +181,16 @@ const Dashboard = () => {
   const [openDoor, setOpenDoor] = useState("ON");     // sau này cần có thêm status
   const toggleDoor = () => {
     setOpenDoor((curr) => (curr === "ON" ? "OFF" : "ON"));
+    setCanMutate(true)
   }
   
   useEffect(() => {
-    if (!firstLoad) {
-        if (openDoor !== doorInfoRef.current) {
-            // Nếu có sự thay đổi, gọi handleSubmit()
+    if (!firstLoad && canMutate) {
+        // if (openDoor !== doorInfoRef.current) {
+        //     // Nếu có sự thay đổi, gọi handleSubmit()
             handleSubmit();
-            doorInfoRef.current = openDoor;
-        }
+        //     doorInfoRef.current = openDoor;
+        // }
     }
   }, [openDoor])
 
@@ -155,11 +219,10 @@ const Dashboard = () => {
                 <div className={`flex flex-col gap-2 justify-end items-start`}>
                 <div 
                     className={`text-white text-xl sm:text-3xl font-bold`}>
-                    {new Date().getHours().toString()} : {new Date().getMinutes().toString()} PM
+                    {dateTime}
                   </div>
                   <div 
                     className={`text-white text-base sm:text-2xl font-semibold`}>
-                    {/* 12 May 2022 */}
                     {new Date().toDateString()}
                   </div>
                   <div className={`text-white text-base sm:text-2xl flex flex-row gap-2 sm:gap-4 items-center`}>
@@ -180,34 +243,28 @@ const Dashboard = () => {
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>David</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad2} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>Bang</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad3} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>Bao</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                 </div>
                 <div className={`flex flex-row ${isFold? "gap-6":"gap-10"} sm:gap-8 justify-center items-center`}>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad4} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>Qui</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad5} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>Cuong</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                   <div className={`flex flex-col gap-0 justify-center items-center`}>
                     <img src={chad6} alt="member" className={`w-[40px] h-[40px] sm:w-[70px] sm:h-[70px] border-2 border-[#A737FF] rounded-[10px]`}/>
                     <span className={`font-semibold text-base md:text-xl`}>Mr.Thinh</span>
-                    {/* <span>Nguyen</span> */}
                   </div>
                 </div>
                 
@@ -413,19 +470,19 @@ const Dashboard = () => {
               </div>
               <div className={`w-full h-full flex ${isSmall? "flex-col" : "flex-row"}  justify-between`}>
                 <div className={`${isSmall? "w-full" : "w-[30%]"} flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md h-full`} src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/31e5c115209901.5628e3b91960f.gif" alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src={cam1} alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Living room</span>
                   </div>
                 </div>
                 <div className={`${isSmall? "w-full mt-4" : "w-[30%]"} flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md h-full`} src="https://i.gifer.com/embedded/download/XxjV.gif" alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src={cam2} alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Kitchen</span>
                   </div>
                 </div>
                 <div className={`${isSmall? "w-full mt-4" : "w-[30%]"} flex flex-col gap-2`}>
-                  <img className={`rounded-2xl shadow-md h-full`} src="https://img1.picmix.com/output/pic/normal/5/8/8/0/9140885_639fa.gif" alt={"Cam1"} />
+                  <img className={`rounded-2xl shadow-md h-full`} src={cam3} alt={"Cam1"} />
                   <div className={`flex flex-row gap-4 items-center`}>
                     <div className={`w-[10px] h-[10px] rounded-full bg-red-600`}></div><span>Main entrance</span>
                   </div>

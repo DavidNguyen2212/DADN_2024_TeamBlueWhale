@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
 import { OpenSidebarContext } from "../../Layouts/AfterLogin";
-import styles from "./Sidebar.module.css"
 import { useNewNotice } from "../../Contexts/NoticeContext";
 import { useSocket } from "../../Contexts/SocketIOContext";
 import { GetNumberNotifs } from "../../API/NotificationAPI/NotificationAPI";
@@ -11,10 +10,10 @@ export const ExpandSidebarContext = createContext()
 
 export default function Sidebar({ children }) {
     const [expanded, setExpanded] = useState(false)
-    const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
+    const {setShowSideBar} = useContext(OpenSidebarContext)
 
     return (
-        <aside className={`h-screen flex min-h-screen`}>
+        <aside className={`h-screen flex min-h-full`}>
             <nav className={`fixed h-full overflow-y-auto overflow-x-clip flex flex-col border-r shadow-sm bg-[#09006F]`}>
                 <div className={`p-4 pb-2 flex ${expanded?"flex-row mb-11":"flex-col mb-4"}  justify-between`}>
                     <div className={`${expanded?"ml-2":"flex justify-center"} cursor-pointer `}>
@@ -37,16 +36,16 @@ export default function Sidebar({ children }) {
 };
 
 export function SidebarItem({func, icon, text, path, alert}) {
-    const {showSideBar, setShowSideBar} = useContext(OpenSidebarContext)
+    const {setShowSideBar} = useContext(OpenSidebarContext)
     const {expanded} = useContext(ExpandSidebarContext)
     const NewNoticeContext = useNewNotice();
     const UserSocket = useSocket();
-    UserSocket?.socket.on('Announce change', async(data) => {
+
+    UserSocket?.socket?.on('Announce change', async(data) => {
         const new_notice = await GetNumberNotifs();
-        console.log("Change")
         NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
     })
-
+  
     return (
     <NavLink onClick={() => setShowSideBar(false)} to={path}>
         <li className={`relative flex items-center py-2 px-3 my-1 

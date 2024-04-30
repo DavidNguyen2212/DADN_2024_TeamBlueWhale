@@ -5,6 +5,7 @@
 @media screen and (max-width: 1280px) {
     .SideBarHide {
       transform: translateX(-340px);
+      /* transition: transform 0.3s ease-in-out; */
     }
     .Main_Container {
       padding-left: 0;

@@ -6,22 +6,17 @@ import Warning from "../../Components/Messages/Warning";
 import Notify from "../../Components/Messages/Notify";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { BsCalendar } from "react-icons/bs";
 import { format } from "date-fns";
 import vi from "date-fns/locale/vi";
 import { GetNotificationsByDay, MarkAllNotifasRead } from "../../API/NotificationAPI/NotificationAPI";
 import MyLoader from "../../Components/Messages/Loader";
 import { useNewNotice } from "../../Contexts/NoticeContext";
-import { confirmCheckNotice, getNotice } from "../../API/MessageAPI/MessageAPI";
 import { useSocket } from "../../Contexts/SocketIOContext";
 import { ListChecks, ListTodo } from 'lucide-react'
 import {useMediaQuery} from 'react-responsive'
 import useAuthPrivate from "../../CustomHook/useAuthPrivate";
-import { GetNumberNotifs } from "../../API/NotificationAPI/NotificationAPI";
-import { io } from "socket.io-client";
-import PersistLogin from "../Login/PersistLogin";
-import { useAuth } from "../../Contexts/AuthProvider";
 
 const Message = () => {
   const NewNoticeContext = useNewNotice();
@@ -30,7 +25,6 @@ const Message = () => {
   const [allNotifs, setAllNotifs] = useState();
   const isMobile = useMediaQuery({maxWidth: 600});
   const [rerender, setRerender] = useState(false)
-  const {auth} = useAuth()
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -41,33 +35,20 @@ const Message = () => {
   const CustomAPI = useAuthPrivate()
   const fetchNotifs = async (query_day) => {
       const response = await GetNotificationsByDay(CustomAPI, query_day);
-      console.log("Notifs data: ", response);
-      // const new_notice = await GetNumberNotifs();
-      // NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
-      // if (query_day === format(new Date(), "yyyy-MM-dd", { locale: vi }))
+      // console.log("Notifs data: ", response);
       NewNoticeContext.updateNewNotice(response?.data[0]["unReadCount"]);
       setAllNotifs(response?.data?.slice(1));
   } 
 
-
   const handleCheckAll = async() => {
     if (NewNoticeContext.newNotice !== 0) {
-      const response = await MarkAllNotifasRead(format(selectedDate, "yyyy-MM-dd", { locale: vi }))
+      await MarkAllNotifasRead(format(selectedDate, "yyyy-MM-dd", { locale: vi }))
       setAllNotifs();
       setRerender(!rerender)
     }
   }
-  // const response = useAuthPrivate()
+
   useEffect(() => {
-      // if (!UserSocket) {
-      //     const socket = io("https://dadn-2024-backend.onrender.com");
-      //     socket.on("connect", () => {
-      //         console.log("Init socket IO with socketID = ", socket?.id);
-      //     });
-      //     UserSocket?.connectSocket(socket);
-          
-      // }
-    
     fetchNotifs(format(selectedDate, "yyyy-MM-dd", { locale: vi }));
     setFirstLoad(false);
   }, [])

@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, useQueries } from '@reduxjs/toolkit/query/react';
 
 export const smartHomeAPI = createApi({
   reducerPath: "smartHomeAPI",
@@ -11,10 +11,29 @@ export const smartHomeAPI = createApi({
     }
   }),
   endpoints: (builder) => ({
-    getLivingroom: builder.query({
-      // Định nghĩa hàm truy vấn API
-      query: () => "/livingroom/data/last",
+    getAllAttributes: builder.query({
+      // query: () => "/temp/data/last",
+      async queryFn(_arg, _queryApi, _extraOptions, fetchWithBQ) {
+          // Fetch tất cả bằng Promise.all
+          const [temp, humi, lux, chandeliers, AC, tempAC] = await Promise.all([
+            fetchWithBQ("/temp/data/last"),
+            fetchWithBQ("/humi/data/last"),
+            fetchWithBQ("/light/data/last"),
+            fetchWithBQ("/chandeliers/data/last"),
+            fetchWithBQ("/control-fan/data/last"),
+            fetchWithBQ("/ac/data/last")
+          ]);
+
+          // Kiểm tra lỗi của mỗi truy vấn
+          if (temp.error || humi.error || lux.error || chandeliers.error || AC.error || tempAC.error) {
+            return { error: 'One or more queries failed' };
+          }
+
+          // Trả về dữ liệu từ tất cả các truy vấn
+          return {data: [temp.data.value, humi.data.value, lux.data.value, chandeliers.data.value, AC.data.value, tempAC.data.value]}
+      },
     }),
+
     getTemperature: builder.query({
         query: () => "/temp/data/last",
     }),
@@ -68,7 +87,7 @@ export const smartHomeAPI = createApi({
   })
 });
 
-export const { useGetLivingroomQuery, useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery, 
+export const { useGetAllAttributesQuery, useGetTemperatureQuery, useGetHumidityQuery, useGetLuxQuery, 
   useGetChandeliersQuery, useGetACQuery, useGetTempACQuery,
   usePostLivingroomMutation, usePostChandeliersMutation,usePostACMutation, usePostTempACMutation } 
   = smartHomeAPI;

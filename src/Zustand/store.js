@@ -6,11 +6,11 @@ const lvroomInfo = {
     temperature: "", 
     humidity: "", 
     lux: "",
-    AC: "0", 
+    AC: "ON", 
     tempAC: 0,
     chandeliers: "OFF", 
-    light1: "off", 
-    light2: "off",
+    light1: "OFF", 
+    light2: "OFF",
     updated_at: ""
 }
 
