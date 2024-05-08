@@ -98,7 +98,7 @@ useEffect(() => {
     <div className="bg-white h-full">
       <Header pageName={"Cài đặt khác"}></Header>
 
-      <div className={`setting w-full h-full bg-white flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
+      <div className={`setting w-full h-full flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
         <div className="mt-8 flex flex-row gap-4 items-center">
           <h2 className="text-2xl font-semibold border-b-2">Dự báo thời tiết</h2> 
           <CloudSun size={40} color="blue"/>

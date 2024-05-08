@@ -20,15 +20,11 @@ import { SettingsIcon, ThermometerSunIcon } from "lucide-react"
 import Chart from "../../Components/Dashboard/Chart";
 import { DoorGet, DoorPost } from "../../API/DoorAPI/DoorAPI";
 import useSpeechReg from "../../CustomHook/useSpeechRegHook.ts";
-import { usePostACMutation, usePostChandeliersMutation, usePostTempACMutation } from "../../API/RTK_Query/apiSlice.jsx";
-import useStore from "../../Zustand/store.js";
 import { VoiceProcessing } from "../../API/Assistant/AssistantAPI.js";
 import mqtt from "mqtt";
-import { protocol } from "socket.io-client";
 
 
 const Dashboard = () => {
-
   const {
     text, setText, startListening, stopListening, isListening, hasRecognitionSupport
   } = useSpeechReg()
@@ -41,18 +37,17 @@ const Dashboard = () => {
   }
   
   const assistantSpeak = (message) => {
-    var msg = new SpeechSynthesisUtterance(message);
-    var voices = window.speechSynthesis.getVoices();
+    let msg = new SpeechSynthesisUtterance(message);
+    let voices = window.speechSynthesis.getVoices();
     // Tìm giọng nói tiếng Việt trong danh sách giọng nói
-    var vietnameseVoice = voices.find(voice => voice.lang === 'vi-VN' && voice.voiceURI.includes("HoaiMy"));
-    // Nếu có giọng nói tiếng Việt, sử dụng nó; nếu không, sử dụng giọng mặc định
-    msg.voice = vietnameseVoice || voices[0];
+    let vietnameseVoice = voices.find(voice => voice.lang === 'vi-VN')
+    let HoaiMyVoice = voices.find(voice => voice.lang === 'vi-VN' && voice.voiceURI.includes("HoaiMy"));
+    // Sử dụng nếu có
+    msg.voice = HoaiMyVoice || vietnameseVoice[0] || voices[0];
     window.speechSynthesis.speak(msg);
-}
-
+  }
 
   const textToCommand = async (your_text) => {
-    // assistantSpeak(your_text)
     if (your_text !== '' && your_text !== "Press to command me!" && your_text !== "Đã thực hiện!") {
       setText("Đang xử lý...")
       const response = await VoiceProcessing(JSON.stringify({"usertext": your_text}))
@@ -79,66 +74,63 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-      let isMounted = true;
-      // if (effectRan == false) {
-      mqttConnect("mqtt://io.adafruit.com", {
-      host: "io.adafruit.com",
-      port: 443,
-      username: process.env.REACT_APP_DAVID_NAME,
-      password: process.env.REACT_APP_DAVID_KEY,
-      protocol: 'wss'
+    let isMounted = true;
+    mqttConnect("mqtt://io.adafruit.com", {
+    host: "io.adafruit.com",
+    port: 443,
+    username: process.env.REACT_APP_DAVID_NAME,
+    password: process.env.REACT_APP_DAVID_KEY,
+    protocol: 'wss'
     });
-      // }
-      const fetchDoorState = async() => {
-        const response = await DoorGet();
-        console.log("Reponse from Door api: ", response);
-        const value = response?.data?.value;
-        doorInfoRef.current = value;
-  
-        setOpenDoor(value);
-        setFirstLoad(false);
-      }
-      if (effectRan.current === false)
-        fetchDoorState();
 
-      return () => {
-          isMounted = false;
-          effectRan.current = true
-          if (client) {
-              console.log("Xóa client")
-              client.end();
-          }
-      };
+    const fetchDoorState = async() => {
+      const response = await DoorGet();
+      console.log("Reponse from Door api: ", response);
+      const value = response?.data?.value;
+      doorInfoRef.current = value;
+
+      setOpenDoor(value);
+      setFirstLoad(false);
+    }
+    if (effectRan.current === false)
+      fetchDoorState();
+
+    return () => {
+        isMounted = false;
+        effectRan.current = true
+        if (client) {
+            console.log("Xóa client")
+            client.end();
+        }
+    };
   }, [])
   
   useEffect(() => {
-      if (client && effectRan) {
-          client.on('connect', () => {
-              setConnectStatus('Connected');
-              console.log("Connected!")
-              client.subscribe("Giaqui14032002/feeds/door")
-          });
-          console.log(client);
-          client.on('error', (err) => {
-              console.error('Connection error: ', err);
-              client.end();
-          });
-          client.on('reconnect', () => {
-              setConnectStatus('Reconnecting');
-          });
-          client.on('message', (topic, message) => {
-              const payload = { topic, message: message.toString() };
-              // console.log("Nhan du lieu", payload)
-              if (topic.includes("door") && effectRan.current && message.toString() !== openDoor)
-                setOpenDoor(message.toString())
-          });
-      }
+    if (client && effectRan) {
+        client.on('connect', () => {
+            setConnectStatus('Connected');
+            console.log("Connected!")
+            client.subscribe("Giaqui14032002/feeds/door")
+        });
+        console.log(client);
+        client.on('error', (err) => {
+            console.error('Connection error: ', err);
+            client.end();
+        });
+        client.on('reconnect', () => {
+            setConnectStatus('Reconnecting');
+        });
+        client.on('message', (topic, message) => {
+            if (topic.includes("door") && effectRan.current && message.toString() !== openDoor)
+              setOpenDoor(message.toString())
+        });
+    }
 
-      return () => {
-          if (client) {
-              client.removeAllListeners();
-          }
-      };
+    return () => {
+        if (client) {
+            client.removeAllListeners();
+        }
+    };
     }, [client]);
 
   const [dateTime, setDateTime] = useState('');
@@ -162,7 +154,6 @@ const Dashboard = () => {
     return () => clearInterval(timeID)
   }, [])
   const doorInfoRef = useRef("");
-
 
   useEffect(() => {
     if (firstLoad)
@@ -195,11 +186,8 @@ const Dashboard = () => {
   
   useEffect(() => {
     if (!firstLoad && canMutate) {
-        // if (openDoor !== doorInfoRef.current) {
-        //     // Nếu có sự thay đổi, gọi handleSubmit()
-            handleSubmit();
-        //     doorInfoRef.current = openDoor;
-        // }
+      // can mutate means not the first load (first change)
+      handleSubmit();
     }
   }, [openDoor])
 
@@ -208,7 +196,7 @@ const Dashboard = () => {
     <div className="bg-white">
       <Header pageName={"Bảng điều khiển"}></Header>
 
-      <div className={`dashboard w-full h-full bg-white flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
+      <div className={`dashboard w-full h-full flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
           {/* Good evening & members block */}
           <div className={`w-full flex flex-col gap-4 lg:flex-row lg:gap-6 mt-4`}>
             {/* Good evening */}

@@ -1,5 +1,5 @@
 import Header from "../../Components/Header/Header";
-import styles from "./Help.module.css";
+import styles from "./Help.module.scss";
 import student from "../../Assets/images/student.svg";
 import manager from "../../Assets/images/manager.svg";
 import staff from "../../Assets/images/employee-icon.svg";
@@ -9,7 +9,7 @@ const Help = () => {
     <div className="bg-white h-full">
       <Header pageName={"Trợ giúp"}></Header>
       
-      <div className={`setting w-full h-full bg-white flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
+      <div className={`setting w-full h-full flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
       <div className={`${styles.Support_lgradient} mt-4 md:mt-8 relative justify-center pt-[50%] md:pt-[50%]`}>
         <div className={`${styles.slider__content2} absolute text-center text-[#0f6cbf] left-1/2 top-[1rem] md:top-[2.5rem]`}>
           <h2 className={`${styles.slider__heading2} text-base mb-1 md:text-3xl lg:text-5xl`}>
@@ -79,7 +79,7 @@ const Help = () => {
 
         <p className="text-base md:text-xl indent-4">
           Nếu có thắc mắc về hướng dẫn trong tài liệu, vui lòng liên hệ
-          bigdaddy.spssvn@gmail.com để được giải đáp. Chúng tôi không giải quyết
+          smarthomeBlueWhale@gmail.com để được giải đáp. Chúng tôi không giải quyết
           những câu hỏi mà trong tài liệu đã được đề cập rõ ràng.
         </p>
       </div>
