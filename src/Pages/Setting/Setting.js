@@ -33,13 +33,13 @@ const Setting = () => {
 
   useEffect(() => {
     let isMounted = true;
-    // if (effectRan == false) {
         mqttConnect("mqtt://io.adafruit.com", {
         host: "io.adafruit.com",
         port: 443,
         username: process.env.REACT_APP_DAVID_NAME,
-        password: process.env.REACT_APP_DAVID_KEY});
-    // }
+        password: process.env.REACT_APP_DAVID_KEY,
+        protocol: 'wss'
+      });
     
     return () => {
         isMounted = false;
@@ -84,10 +84,6 @@ useEffect(() => {
         }
     };
   }, [client]);
-
-  // useEffect(() => {
-  //   handleSubmit(temp, humi)
-  // }, [])
 
   const {data, isLoading, isError, isFetching, refetch } = useGetAllAttributesQuery({}, { refetchOnMountOrArgChange: true, forceRefetch: true });
   useEffect(() => {
