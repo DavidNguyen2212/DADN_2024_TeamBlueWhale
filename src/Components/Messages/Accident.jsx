@@ -23,6 +23,7 @@ const Accident = (props) => {
     return (
         <div onClick={handleRead} className={`${isRead ? styles._Accident : styles._AccidentUnRead} w-full md:w-[90%]  bg-[#FFF5F3] flex flex-row gap-3 sm:gap-4 md:gap-8 lg:gap-12 px-3 py-3 sm:px-5 sm:py-5 ${isRead ? "shadow-lg" : ""}`}>
             {/* Icon and label */}
+            {/* {!isRead && <ReactPlayer className="hidden" url={mp3} playing/>} */}
             <div>
                 {isSmall ? <AccidentIconSmall /> : <AccidentIcon />}
             </div>

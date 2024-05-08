@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { HomeIcon } from "../../Assets/icons/Icon";
 import { ChevronFirst } from 'lucide-react'
@@ -6,12 +6,19 @@ import { OpenSidebarContext } from "../../Layouts/AfterLogin";
 import { useNewNotice } from "../../Contexts/NoticeContext";
 import { useSocket } from "../../Contexts/SocketIOContext";
 import { GetNumberNotifs } from "../../API/NotificationAPI/NotificationAPI";
+import ReactPlayer from "react-player";
+import accmp3 from "../../Assets/images/accident2.mp3"
+import strmp3 from "../../Assets/images/strange.mp3"
+import { warning } from "framer-motion";
+
+
 export const ExpandSidebarContext = createContext()
 
 export default function Sidebar({ children }) {
     const [expanded, setExpanded] = useState(false)
     const {setShowSideBar} = useContext(OpenSidebarContext)
-
+    const acc_audio = new Audio(accmp3)
+    const str_audio = new Audio(strmp3)
     return (
         //  min-h-full
         <aside className={`h-[100vh] min-h-full`}> 
@@ -28,7 +35,7 @@ export default function Sidebar({ children }) {
                     </button>
                 </div>
 
-                <ExpandSidebarContext.Provider value={{expanded}}>
+                <ExpandSidebarContext.Provider value={{expanded, acc_audio, str_audio}}>
                     <ul className="flex-1 px-3">{ children }</ul>
                 </ExpandSidebarContext.Provider>
             </nav>
@@ -38,17 +45,31 @@ export default function Sidebar({ children }) {
 
 export function SidebarItem({func, icon, text, path, alert}) {
     const {setShowSideBar} = useContext(OpenSidebarContext)
-    const {expanded} = useContext(ExpandSidebarContext)
+    const {expanded, acc_audio, str_audio} = useContext(ExpandSidebarContext)
     const NewNoticeContext = useNewNotice();
     const UserSocket = useSocket();
-
+    
     UserSocket?.socket?.on('Announce change', async(data) => {
         const new_notice = await GetNumberNotifs();
         NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
     })
-  
+
+    UserSocket?.socket?.on('Fire', async(data) => {
+        const new_notice = await GetNumberNotifs();
+        NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
+        acc_audio.play();    
+    })
+    UserSocket?.socket?.on('Stranger', async(data) => {
+        const new_notice = await GetNumberNotifs();
+        NewNoticeContext.updateNewNotice(new_notice?.data?.newNotifsToday);
+        str_audio.play();
+    });
+
+
     return (
+    
     <NavLink onClick={() => setShowSideBar(false)} to={path}>
+        {/* {acc && <ReactPlayer className="hidden" url={accmp3} playing/>} */}
         <li className={`relative flex items-center py-2 px-3 my-1 
             font-medium rounded-md cursor-pointer
             transition-colors group ${
