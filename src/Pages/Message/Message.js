@@ -65,6 +65,20 @@ const Message = () => {
     setRerender(!rerender)
   })
 
+  UserSocket?.socket?.on('Stranger', (data) => {
+    let this_day = new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"})
+    setSelectedDate(this_day)
+    setAllNotifs();
+    setRerender(!rerender)
+  })
+
+  UserSocket?.socket?.on('Fire', (data) => {
+    let this_day = new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"})
+    setSelectedDate(this_day)
+    setAllNotifs();
+    setRerender(!rerender)
+  })
+
   return (
       <div className={`bg-white h-full`}>
         <Header pageName={"Thông báo"}></Header>

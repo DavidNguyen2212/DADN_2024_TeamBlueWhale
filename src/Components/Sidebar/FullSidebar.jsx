@@ -26,7 +26,7 @@ const FullSidebar = ({showSideBar}) => {
             <SidebarItem icon={<DashBoardIcon size={50}/>} text="Dashboard"  path="/Dashboard"/>
             <SidebarItem icon={<DevicesIcon size={50}/>} text="Devices" path="/Devices"/>
             <SidebarItem icon={<MessageIcon size={50}/>} text="Message" alert path="/Message" />
-            <SidebarItem icon={<SettingIcon size={50}/>} text="Settings" path="/Setting"/>
+            <SidebarItem icon={<SettingIcon size={50}/>} text="Others" path="/Setting"/>
             <hr className="my-3"/>
             <SidebarItem icon={<HelpCircleIcon size={50} color="#8F00FF"/>} text="Help" path="/Help"/>
         </Sidebar>

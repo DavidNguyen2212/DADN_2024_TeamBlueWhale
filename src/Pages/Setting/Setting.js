@@ -8,13 +8,14 @@ import rainy from "../../Assets/images/rainy.gif"
 import sunny from "../../Assets/images/sunny.gif"
 import cloudy from "../../Assets/images/cloudy.gif"
 import clear from "../../Assets/images/clear.gif"
+import { useGetAllAttributesQuery } from "../../API/RTK_Query/apiSlice";
 
 
 const Setting = () => {
   const effectRan = useRef(false)
   const [canMutate, setCanMutate] = useState(false)
-  const [temp, setTemp] = useState(30)
-  const [humi, setHumi] = useState(70)
+  const [temp, setTemp] = useState(0)
+  const [humi, setHumi] = useState(0)
   const [weather, setWeather] = useState("None")
   const [client, setClient] = useState(null);
   const [connectStatus, setConnectStatus] = useState();
@@ -84,21 +85,22 @@ useEffect(() => {
     };
   }, [client]);
 
-  useEffect(() => {
-    handleSubmit(temp, humi)
-  }, [])
+  // useEffect(() => {
+  //   handleSubmit(temp, humi)
+  // }, [])
 
-//   const {data, isLoading, isError, isFetching, refetch } = useGetAllAttributesQuery({}, { refetchOnMountOrArgChange: true, forceRefetch: true });
-//   useEffect(() => {
-//     if (data) {
-//       setTemp(data[0]);
-//       setHumi(data[1])
-//     }
-// }, [isLoading, isFetching])
+  const {data, isLoading, isError, isFetching, refetch } = useGetAllAttributesQuery({}, { refetchOnMountOrArgChange: true, forceRefetch: true });
+  useEffect(() => {
+    if (data) {
+      setTemp(data[0]);
+      setHumi(data[1]);
+      handleSubmit(data[0], data[1])
+    }
+}, [isLoading, isFetching])
 
   return (
     <div className="bg-white h-full">
-      <Header pageName={"Cài đặt"}></Header>
+      <Header pageName={"Cài đặt khác"}></Header>
 
       <div className={`setting w-full h-full bg-white flex flex-col gap-4 sm:gap-8 pl-4 pr-4`}>
         <div className="mt-8 flex flex-row gap-4 items-center">
